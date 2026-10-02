@@ -42,5 +42,11 @@
   quiz.querySelectorAll('.show').forEach(function(b){b.addEventListener('click',function(){b.nextElementSibling.hidden=false;b.hidden=true})});
   if(S.quiz[n]){sc.textContent='Прошлый результат: '+S.quiz[n]}
  }
+ // видеоразбор (только на страницах параграфов)
+ if(cur()){
+  var base=document.currentScript.src.replace(/app\.js.*$/,'');
+  var l=document.createElement('link');l.rel='stylesheet';l.href=base+'video.css';document.head.appendChild(l);
+  var s=document.createElement('script');s.src=base+'video.js';document.body.appendChild(s);
+ }
  paint();
 })();
