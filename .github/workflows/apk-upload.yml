@@ -1,0 +1,28 @@
+name: Publish signed APK
+
+on:
+  push:
+    paths:
+      - 'apk-src/**'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Decode APK and commit it
+        run: |
+          set -e
+          mkdir -p apk
+          base64 -d apk-src/History7-signed.apk.b64 > apk/History7-signed.apk
+          sha256sum apk/History7-signed.apk
+          git rm -q apk-src/History7-signed.apk.b64
+          git config user.name "github-actions"
+          git config user.email "actions@users.noreply.github.com"
+          git add apk/History7-signed.apk
+          git commit -m "Publish signed APK"
+          git push
