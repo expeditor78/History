@@ -10,3 +10,4 @@
 .vmeta{margin:8px 0 0;color:var(--tx2);font-size:14px}
 @media print{.vid{display:none}}
 .vid h2 small{font-size:14px;font-weight:400;color:var(--tx2);margin-left:8px}
+.vmeta .btn{min-height:40px;margin-right:8px}

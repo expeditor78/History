@@ -53,6 +53,13 @@ def parse(lines):
                 j += 1
             blocks.append(('table', header, rows))
             i = j + 1; continue
+        m = re.match(r'#{1,4} (.*?)\s*\{toggle="true"\}\s*$', s)
+        if m:  # заголовок-переключатель Notion: содержимое с отступом табом
+            j = i + 1; inner = []
+            while j < len(lines) and (lines[j].startswith('\t') or not lines[j].strip()):
+                inner.append(lines[j]); j += 1
+            blocks.append(('details', m.group(1), parse(dedent(inner))))
+            i = j; continue
         m = re.match(r'(#{1,4}) (.*)', s)
         if m:
             blocks.append(('h', len(m.group(1)), m.group(2))); i += 1; continue
@@ -220,7 +227,7 @@ def video(n):
     return (f'<section class="vid"><h2>🎬 Видеоразбор параграфа <small>{d}</small></h2>'
             f'<div class="vframe"><iframe src="https://www.youtube-nocookie.com/embed/{vid}?rel=0" title="Видеоразбор параграфа" loading="lazy" '
             f'allow="accelerometer; encrypted-media; picture-in-picture; fullscreen" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe></div>'
-            f'<p class="vmeta">Не открывается? <a href="https://www.youtube.com/watch?v={vid}" target="_blank" rel="noopener">Смотреть на YouTube ↗</a></p></section>')
+            f'<p class="vmeta"><a class="btn ghost" href="https://www.youtube.com/watch?v={vid}" target="_blank" rel="noopener">▶ Открыть на YouTube</a> <span>Если плеер выше не грузится — смотрите здесь.</span></p></section>')
 
 # paragraph pages
 for i, p in enumerate(paras):
