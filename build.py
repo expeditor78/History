@@ -182,9 +182,42 @@ def nav(active=''):
 def page(title, body, active='', root='', extra=''):
     nv = nav(active).replace('{R}', root)
     return f'''<!doctype html><html lang="ru"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>{html.escape(title)} — История Нового времени, 7 класс</title><link rel="stylesheet" href="{root}style.css"></head>
+<title>{html.escape(title)} — История Нового времени, 7 класс</title><link rel="stylesheet" href="{root}style.css"><link rel="stylesheet" href="{root}video.css"></head>
 <body><header class="top"><button id="menu" aria-label="Меню">☰</button><span>История Нового времени · 7 класс</span></header>
 {nv}<main>{body}</main><script src="{root}app.js" defer></script></body></html>'''
+
+# Видеоразборы: № страницы -> (id ролика на YouTube, длительность). Канал Tatiana Themis, серия «История Нового времени 7 / Мединский».
+VIDEOS = {
+    1: ('ISlQzbwqXHg', '19:45'),
+    2: ('wo59YKor-AE', '20:31'),
+    3: ('-3OXpYC13w4', '28:22'),
+    4: ('jAWJPzGAEw0', '21:51'),
+    5: ('7qENzDfLRf0', '23:23'),
+    6: ('0-XWz2pn1FI', '21:54'),
+    7: ('ZkX6b6oPIvM', '19:16'),
+    8: ('2GJ6BqdvDpU', '16:03'),
+    9: ('jyqb3gc5hYQ', '17:24'),
+    10: ('Xuesbuv0WyM', '15:50'),
+    11: ('TbUq1jnH8S4', '21:20'),
+    12: ('0-NkuYcP7zU', '20:02'),
+    13: ('PvU415Sj464', '22:08'),
+    14: ('utScbaZw6jA', '26:20'),
+    15: ('JzGoDqhh5xY', '19:20'),
+    16: ('THpKSNjSIgI', '19:20'),
+    17: ('k-9y_Wklnas', '21:45'),
+    18: ('0UH2FBSgaTk', '19:39'),
+    19: ('HSh9Yx7bYis', '12:38'),
+    20: ('OTqONm6hPB8', '21:50'),
+    21: ('hrqxQNeJDOA', '12:03'),
+}
+
+def video(n):
+    if n not in VIDEOS: return ''
+    vid, d = VIDEOS[n]
+    return (f'<section class="vid"><h2>🎬 Видеоразбор параграфа <small>{d}</small></h2>'
+            f'<div class="vframe"><iframe src="https://www.youtube-nocookie.com/embed/{vid}?rel=0" title="Видеоразбор параграфа" loading="lazy" '
+            f'allow="accelerometer; encrypted-media; picture-in-picture; fullscreen" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe></div>'
+            f'<p class="vmeta">Не открывается? <a href="https://www.youtube.com/watch?v={vid}" target="_blank" rel="noopener">Смотреть на YouTube ↗</a></p></section>')
 
 # paragraph pages
 for i, p in enumerate(paras):
@@ -194,6 +227,7 @@ for i, p in enumerate(paras):
     ci = CH.index(p['ch'])
     body = f'''<div class="crumb" style="--c:{chcol[ci]}">{p['ch']}</div><h1><span class="big">{p['icon']}</span>{html.escape(p['title'])}</h1>
 <div class="status" data-p="{p['num']}"><span>Статус:</span><button class="st" id="st">Не начато</button><span class="hint">нажмите, чтобы сменить</span></div>
+{video(p['num'])}
 {body_md}
 <div class="pager">{'<a href="'+pv['file']+'">← '+html.escape(pv['title'])+'</a>' if pv else '<span></span>'}{'<a href="'+nx['file']+'">'+html.escape(nx['title'])+' →</a>' if nx else '<a href="../index.html">К оглавлению →</a>'}</div>'''
     open(f"{OUT}/p/{p['file']}", 'w').write(page(p['title'], body, p['file'], '../'))
@@ -221,4 +255,6 @@ home = f'''<h1>История Нового времени, 7 класс — по
 open(f'{OUT}/index.html', 'w').write(page('Оглавление', home, '', ''))
 
 open(f'{OUT}/.nojekyll', 'w').write('')
+for f in os.listdir('dist_src'):
+    if f != 'video.js': shutil.copy('dist_src/' + f, OUT + '/' + f)
 print('built', len(paras))
