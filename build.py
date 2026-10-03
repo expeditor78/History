@@ -166,6 +166,9 @@ for n in range(32, 53):
 for i, p in enumerate(paras):
     p['file'] = f"{p['num']:02d}.html"
 
+ABOUT = ('<footer class="about">💡 Идея и составление: <b>Алексей</b> · '
+         '<a href="https://github.com/expeditor78" target="_blank" rel="noopener">GitHub: expeditor78</a></footer>')
+
 def nav(active=''):
     h = ['<nav class="side" id="side"><a class="brand" href="{R}index.html">🧭 История Нового времени<small>7 класс</small></a>',
          '<div class="prog"><div class="bar"><i id="gbar"></i></div><span id="gtxt">0 из 21</span></div>',
@@ -184,7 +187,7 @@ def page(title, body, active='', root='', extra=''):
     return f'''<!doctype html><html lang="ru"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <title>{html.escape(title)} — История Нового времени, 7 класс</title><link rel="stylesheet" href="{root}style.css"><link rel="stylesheet" href="{root}video.css"></head>
 <body><header class="top"><button id="menu" aria-label="Меню">☰</button><span>История Нового времени · 7 класс</span></header>
-{nv}<main>{body}</main><script src="{root}app.js" defer></script></body></html>'''
+{nv}<main>{body}{ABOUT}</main><script src="{root}app.js" defer></script></body></html>'''
 
 # Видеоразборы: № страницы -> (id ролика на YouTube, длительность). Канал Tatiana Themis, серия «История Нового времени 7 / Мединский».
 VIDEOS = {
