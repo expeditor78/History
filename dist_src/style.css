@@ -45,3 +45,4 @@ li{margin:4px 0}
 @media(prefers-reduced-motion:reduce){*{transition:none!important;scroll-behavior:auto!important}}
 .about{margin-top:48px;padding-top:16px;border-top:1px solid var(--bd);color:var(--tx2);font-size:14px}
 @media print{.about{display:none}}
+.inst{display:block;width:calc(100% - 16px);margin:0 8px 8px;min-height:40px;border:1px solid var(--bl);background:var(--blS);color:var(--bl);border-radius:8px;font:inherit;font-weight:600;cursor:pointer}

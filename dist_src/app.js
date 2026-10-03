@@ -1,4 +1,5 @@
 (function(){
+ var BASE=document.currentScript?document.currentScript.src.replace(/app\.js.*$/,''):'';
  var NAMES=['Не начато','Читаем','Повторить','Усвоено'];
  var KEY='hist7.v1';
  var S=JSON.parse(localStorage.getItem(KEY)||'{}');S.st=S.st||{};S.quiz=S.quiz||{};
@@ -41,6 +42,20 @@
   })})});
   quiz.querySelectorAll('.show').forEach(function(b){b.addEventListener('click',function(){b.nextElementSibling.hidden=false;b.hidden=true})});
   if(S.quiz[n]){sc.textContent='Прошлый результат: '+S.quiz[n]}
+ }
+ // PWA: офлайн и кнопка «Установить приложение» (не в APK и не по file://)
+ var inApp=location.hostname==='appassets.androidplatform.net';
+ if(!inApp&&'serviceWorker' in navigator&&(location.protocol==='https:'||location.hostname==='localhost')){
+  navigator.serviceWorker.register(BASE+'sw.js').catch(function(){});
+  var dp;
+  window.addEventListener('beforeinstallprompt',function(e){
+   e.preventDefault();dp=e;
+   var pr=document.querySelector('.prog');if(!pr||document.getElementById('inst'))return;
+   var b=document.createElement('button');b.id='inst';b.className='inst';b.textContent='⬇️ Установить приложение';
+   b.onclick=function(){dp.prompt();dp.userChoice.then(function(){b.remove()})};
+   pr.parentNode.insertBefore(b,pr.nextSibling);
+  });
+  window.addEventListener('appinstalled',function(){var b=document.getElementById('inst');if(b)b.remove()});
  }
  paint();
 })();

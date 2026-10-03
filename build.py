@@ -185,7 +185,7 @@ def nav(active=''):
 def page(title, body, active='', root='', extra=''):
     nv = nav(active).replace('{R}', root)
     return f'''<!doctype html><html lang="ru"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>{html.escape(title)} — История Нового времени, 7 класс</title><link rel="stylesheet" href="{root}style.css"><link rel="stylesheet" href="{root}video.css"></head>
+<title>{html.escape(title)} — История Нового времени, 7 класс</title><link rel="stylesheet" href="{root}style.css"><link rel="stylesheet" href="{root}video.css"><link rel="manifest" href="{root}manifest.webmanifest"><meta name="theme-color" content="#2783DE"><link rel="icon" href="{root}icon.svg" type="image/svg+xml"></head>
 <body><header class="top"><button id="menu" aria-label="Меню">☰</button><span>История Нового времени · 7 класс</span></header>
 {nv}<main>{body}{ABOUT}</main><script src="{root}app.js" defer></script></body></html>'''
 
@@ -260,4 +260,26 @@ open(f'{OUT}/index.html', 'w').write(page('Оглавление', home, '', ''))
 open(f'{OUT}/.nojekyll', 'w').write('')
 for f in os.listdir('dist_src'):
     if f != 'video.js': shutil.copy('dist_src/' + f, OUT + '/' + f)
+# --- PWA: service worker с предзагрузкой всех файлов (офлайн-режим) ---
+import hashlib
+files = ['./']
+h = hashlib.sha1()
+for root_, _, names in sorted(os.walk(OUT)):
+    for nm in sorted(names):
+        if nm in ('sw.js', '.nojekyll'): continue
+        fp = os.path.join(root_, nm)
+        files.append('./' + os.path.relpath(fp, OUT).replace(os.sep, '/'))
+        h.update(open(fp, 'rb').read())
+SW = """const V = 'hist7-%s';
+const FILES = %s;
+self.addEventListener('install', e => e.waitUntil(caches.open(V).then(c => c.addAll(FILES)).then(() => self.skipWaiting())));
+self.addEventListener('activate', e => e.waitUntil(caches.keys().then(ks => Promise.all(ks.filter(k => k.startsWith('hist7-') && k !== V).map(k => caches.delete(k)))).then(() => self.clients.claim())));
+self.addEventListener('fetch', e => {
+  const r = e.request;
+  if (r.method !== 'GET' || new URL(r.url).origin !== location.origin) return;
+  e.respondWith(caches.match(r, {ignoreSearch: true}).then(hit => hit || fetch(r)));
+});
+""" % (h.hexdigest()[:10], json.dumps(files))
+open(f'{OUT}/sw.js', 'w').write(SW)
+
 print('built', len(paras))
