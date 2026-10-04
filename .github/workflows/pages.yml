@@ -1,7 +1,7 @@
 name: Deploy to GitHub Pages
+# Запускается только вручную. Чтобы включить автодеплой, включите Pages
+# (Settings → Pages → Source: GitHub Actions) и верните триггер push.
 on:
-  push:
-    branches: [main]
   workflow_dispatch:
 permissions:
   contents: read
