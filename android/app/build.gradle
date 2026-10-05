@@ -20,11 +20,28 @@ android {
             enableV2Signing = true
             enableV3Signing = true
         }
+        // Release-подпись берётся из переменных окружения (GitHub Secrets). В репозитории ничего не хранится.
+        // Если ANDROID_KEYSTORE_PATH не задан, конфигурация всё равно работает (release будет без подписи).
+        release {
+            def ksPath = System.getenv('ANDROID_KEYSTORE_PATH')
+            if (ksPath) {
+                storeFile file(ksPath)
+                storePassword System.getenv('ANDROID_KEYSTORE_PASSWORD')
+                keyAlias System.getenv('ANDROID_KEY_ALIAS')
+                keyPassword System.getenv('ANDROID_KEY_PASSWORD')
+                enableV1Signing = true
+                enableV2Signing = true
+                enableV3Signing = true
+            }
+        }
     }
 
     buildTypes {
         release {
             minifyEnabled false
+            if (System.getenv('ANDROID_KEYSTORE_PATH')) {
+                signingConfig signingConfigs.release
+            }
         }
     }
 
