@@ -1,0 +1,113 @@
+<!doctype html><html lang="ru"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Франция — карта</title><link rel="stylesheet" href="style.css">
+<style>
+body{margin:0}.wrap{max-width:1000px;margin:0 auto;padding:16px 16px 64px}
+.nav{display:flex;align-items:center;gap:12px;margin-bottom:8px}.nav a{min-height:44px;display:inline-flex;align-items:center;font-weight:600;text-decoration:none}
+h1{font-size:26px;margin:4px 0 8px}
+.tabs,.chips,.regs{display:flex;gap:8px;flex-wrap:wrap;margin:8px 0}
+.tab,.chip,.reg{font:inherit;border:1px solid var(--bd);background:var(--sf);color:var(--tx);border-radius:999px;padding:0 14px;min-height:44px;cursor:pointer}
+.tab.on{background:var(--bl);color:#fff;border-color:var(--bl)}
+.chip{display:inline-flex;align-items:center;gap:8px}.chip i{width:14px;height:4px;border-radius:2px;background:var(--c)}.chip.off{opacity:.45}.chip.sel{border-color:var(--c);box-shadow:0 0 0 2px var(--c) inset}
+.reg{min-height:36px;font-size:14px}
+#mapbox{border:1px solid var(--bd);border-radius:12px;overflow:hidden;background:#cfe6f5}
+svg{display:block;width:100%;height:auto;touch-action:manipulation}
+.land{fill:#EADFC8;stroke:#B9A98A;stroke-width:.6}.sea2{fill:#cfe6f5;stroke:#B9A98A;stroke-width:.4}
+.grid{stroke:rgba(0,0,0,.08);stroke-width:.4}
+.route{fill:none;stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round;cursor:pointer}.route.hit{stroke:transparent;stroke-width:14}
+.route.dim{opacity:.18}.route.act{stroke-width:3.4}
+.city{fill:#fff;stroke:#2C2C2B;stroke-width:1.2;cursor:pointer}.lbl{font:600 8px -apple-system,Arial,sans-serif;fill:#2C2C2B;paint-order:stroke;stroke:#fff;stroke-width:2.4px;pointer-events:none}
+.cl{font:700 9px Arial;fill:rgba(0,0,0,.28);letter-spacing:2px;pointer-events:none}
+.panel{border:1px solid var(--bd);border-radius:12px;padding:16px;margin-top:12px;background:var(--sf)}.panel h2{margin:0 0 4px;font-size:20px}.panel .d{color:var(--tx2);font-size:14px;margin-bottom:8px}.panel p{margin:6px 0}
+.btn{font:inherit;cursor:pointer;border:0;border-radius:8px;background:var(--bl);color:#fff;min-height:44px;padding:0 18px;font-weight:600}
+.q{font-size:18px;font-weight:600}.fb{min-height:24px;font-weight:600}.ok{color:var(--gr)}.bad{color:var(--rd)}
+.tgt{fill:none;stroke:var(--gr);stroke-width:2}.miss{fill:none;stroke:var(--rd);stroke-width:2}
+@media(prefers-color-scheme:dark){#mapbox{background:#1d3a52}.land{fill:#3a3a35;stroke:#6b6a60}.sea2{fill:#1d3a52;stroke:#6b6a60}.lbl{fill:#fff;stroke:#191919}.city{fill:#191919;stroke:#fff}.cl{fill:rgba(255,255,255,.25)}.grid{stroke:rgba(255,255,255,.08)}}
+
+.zl{fill-opacity:.38;stroke-width:1.2}.lg{display:flex;gap:10px;flex-wrap:wrap;margin:6px 0;font-size:14px}.lg span{display:inline-flex;align-items:center;gap:6px}.lg i{width:14px;height:14px;border-radius:3px;display:inline-block}
+.hint{color:var(--tx2);font-size:13px;margin-top:8px}
+
+svg{max-height:82vh}</style></head><body><div class="wrap">
+<div class="nav"><a href="index.html">← К оглавлению</a><a href="map.html">🧭 Открытия</a><a href="europe.html">🏰 Европа</a><a href="asia.html">🕌 Азия</a><a href="england.html">👑 Англия</a><a href="netherlands.html">🌷 Нидерланды</a><a href="lenta.html">🗓️ Лента времени</a></div>
+<h1>Франция: от религиозных войн к абсолютизму</h1>
+<p style="color:var(--tx2);margin:0 0 8px">К § 10. Нажимай на города, реки и точки на карте. Границы схематичные — точные смотри в атласе учебника.</p>
+<div class="tabs" id="tabs"></div><div class="lg" id="lg"></div>
+<div id="mapbox"><svg id="svg" viewBox="0 0 540 600" role="img" aria-label="Карта Франции"></svg></div>
+<div class="panel" id="panel"></div>
+<script>
+(function(){
+var LAND={};
+var svg=document.getElementById('svg'),NS='http://www.w3.org/2000/svg';
+function el(t,a,p){var e=document.createElementNS(NS,t);for(var k in a)e.setAttribute(k,a[k]);(p||svg).appendChild(e);return e}
+var G=el('g',{});
+var BL='#2783DE',RD='#E56458',GR='#46A171';
+var GB=[[-5.7,50.1],[-4.2,50.35],[-3.4,50.6],[-1.9,50.7],[-1.1,50.8],[0.3,50.75],[1.4,51.15],[1.3,51.4],[0.6,51.4],[1.3,51.8],[1.7,52.6],[1.3,52.95],[0.3,52.9],[0.2,53.3],[-0.2,53.65],[-0.1,54.0],[-1.2,54.6],[-3.2,54.3],[-3.0,53.6],[-3.1,53.4],[-4.3,53.3],[-4.5,53.0],[-4.1,52.6],[-4.7,52.1],[-5.2,51.8],[-4.1,51.55],[-3.2,51.4],[-3.0,51.2],[-4.2,51.2],[-5.1,50.6]];
+var IRL=[[-10,51.6],[-9.4,52.2],[-10.3,52.1],[-9.8,53.0],[-10.0,53.7],[-8.5,54.3],[-8.5,55.2],[-7.3,55.3],[-6.0,55.2],[-5.6,54.6],[-6.0,54.0],[-6.1,53.3],[-6.4,52.2],[-8.0,51.8]];
+var FRC=[[-1.8,43.4],[-1.25,44.5],[-1.2,45.5],[-1.2,46.0],[-2.2,47.1],[-2.8,47.5],[-4.3,47.8],[-4.7,48.5],[-3,48.8],[-1.6,48.7],[-1.9,49.7],[-1.0,49.4],[0.1,49.5],[1.6,50.2],[1.6,50.9],[2.5,51.05],[3.2,50.7],[4.2,49.97],[4.8,50.1],[6.3,49.5],[8.2,48.9],[7.0,47.5],[6.0,46.2],[6.8,45.8],[7.0,44.5],[7.5,43.8],[6.0,43.1],[4.5,43.4],[3.0,43.2],[3.1,42.45],[1.4,42.7],[-0.3,42.8]];
+var BIG=[[-9,43.5],[-9,37],[-5,36],[0,38.5],[3,41.5],[3.0,43.2],[4.5,43.4],[6.0,43.1],[7.5,43.8],[10,44],[14,42],[14,53.5],[5.5,53.4],[4.2,52],[2.5,51.05],[1.6,50.9],[1.6,50.2],[0.1,49.7],[-1.9,49.7],[-1.6,48.7],[-3,48.8],[-4.7,48.5],[-4.3,47.8],[-2.2,47.1],[-1.2,46.0],[-1.25,44.5],[-1.8,43.4]];
+var NA=[[-100,60],[-65,60],[-60,55],[-56,52],[-60,47],[-65,44.5],[-67,45],[-70,41.5],[-74,40.5],[-76,37],[-76,35],[-81,31],[-80,25.5],[-82,27],[-84,30],[-89,30.2],[-94,29.5],[-97,26],[-97.5,22],[-100,20]];
+var L={
+ loc:{n:'Франция',pr:function(lo,la){return [(lo+6)*35,(51.8-la)*55]},vb:[0,0,540,600],
+  land:[BIG,GB,IRL],
+  zones:[{n:'Королевство Франция (схематично)',c:BL,ps:[FRC]}],
+  rivers:[{n:'Луара',c:'#2783DE',d:'Река',t:'Задание учебника: найти замки на Луаре. Река течёт по центру страны к Атлантике (на карте — схема).',ps:[[4.2,44.9],[3.9,46.0],[3.1,46.9],[2.2,47.5],[1.0,47.4],[-0.5,47.4],[-1.55,47.25],[-2.2,47.28]],lx:0.2,ly:47.0}],
+  labs:[['ФРАНЦИЯ',3.0,46.0],['ИСПАНИЯ',-3.0,41.6],['Бискайский залив',-3.8,45.2],['Ла-Манш',-1.2,50.3],['Средиземное море',5.2,42.1]],
+  intro:'<h2>Франция: от религиозных войн к абсолютизму</h2><div class="d">1572 → 1598 → 1627–1628</div><p><b>1572</b> — Варфоломеевская ночь, резня гугенотов. <b>1598</b> — нантский эдикт Генриха IV. <b>1627–1628</b> — осада Ла-Рошели при Ришельё. При Людовике XIV абсолютизм достиг пика.</p><p style="color:var(--tx2)">Нажми на город, реку или район.</p>',
+  pts:[
+  {n:'Париж и Версаль',lo:2.35,la:48.85,d:'Столица',t:'Париж — столица, здесь заседал Парижский парламент. Версаль — резиденция Людовика XIV, символ абсолютизма; он лежит рядом с Парижем.'},
+  {n:'Ла-Рошель',lo:-1.15,la:46.16,d:'Крепость гугенотов',t:'Гугенотская крепость. Осада 1627–1628 гг. при Людовике XIII и Ришельё — фон «Трёх мушкетёров». Вопрос учебника: почему это была «неприступная» крепость?'},
+  {n:'Нант',lo:-1.55,la:47.22,d:'Нантский эдикт',t:'В 1598 г. подписан Нантский эдикт Генриха IV: он разрешил гугенотам исповедовать свою веру.'},
+  {n:'Наварра',lo:-1.3,la:43.1,d:'Юго-запад, у Испании',t:'Отсюда пришёл Генрих IV, первый Бурбон, принёсший стране мир.'},
+  {n:'Замки на Луаре',lo:1.0,la:47.4,d:'Задание учебника',t:'В учебнике просят найти замки на Луаре. Точка схематичная: район среднего течения реки.'}]},
+ wor:{n:'Франция и Луизиана',pr:function(lo,la){return [(lo+100)*4.5,(60-la)*7]},vb:[0,0,495,300],
+  land:[NA,BIG,GB,IRL],zones:[],rivers:[],
+  labs:[['СЕВЕРНАЯ АМЕРИКА',-85,50],['Атлантический океан',-40,42],['ФРАНЦИЯ',3,45]],
+  intro:'<h2>Франция и Луизиана</h2><div class="d">Задание учебника: покажите Луизиану в Северной Америке</div><p>Карта очень схематичная: показаны только точки для поиска. Точные границы смотри в атласе.</p><p style="color:var(--tx2)">Нажми на точку.</p>',
+  pts:[
+  {n:'Париж',lo:2.35,la:48.85,d:'Столица Франции',t:'Столица королевства.'},
+  {n:'Луизиана',lo:-91,la:31,d:'Северная Америка',t:'Французская колония в Северной Америке (низовья Миссисипи). Названа в честь Людовика XIV. На карте — примерное место.'}]}
+};
+
+var cur='loc',quiz=false,sc=0,tot=0,tgt=null;
+var tabs=document.getElementById('tabs'),lg=document.getElementById('lg'),pn=document.getElementById('panel');
+function P(pr,pts){return pts.map(function(p){var q=pr(p[0],p[1]);return q[0].toFixed(1)+','+q[1].toFixed(1)}).join(' ')}
+function mkTabs(){tabs.innerHTML='';Object.keys(L).forEach(function(k){var b=document.createElement('button');b.className='tab'+(!quiz&&cur===k?' on':'');b.textContent=L[k].n;b.onclick=function(){quiz=false;cur=k;draw()};tabs.appendChild(b)});var q=document.createElement('button');q.className='tab'+(quiz?' on':'');q.textContent='🎯 Игра: найди на карте';q.onclick=function(){quiz=true;sc=0;tot=0;draw()};tabs.appendChild(q)}
+function show(p){pn.innerHTML='<h2></h2><div class="d"></div><p></p>';pn.children[0].textContent=p.n;pn.children[1].textContent=p.d;pn.children[2].textContent=p.t}
+function draw(){
+ mkTabs();G.remove();G=el('g',{});
+ var v=L[cur],pr=v.pr,vb=v.vb,vw=vb[2];svg.setAttribute('viewBox',vb.join(' '));
+ var fs=Math.max(vw*0.022,11),r=Math.max(vw*0.011,4.5);lg.innerHTML='';
+ var lands=v.land===true?Object.keys(LAND).map(function(k){return LAND[k]}):v.land;
+ lands.forEach(function(p){el('polygon',{class:'land',points:P(pr,p)},G)});
+ (v.seas||[]).forEach(function(p){el('polygon',{class:'sea2',points:P(pr,p)},G)});
+ v.zones.forEach(function(z){z.ps.forEach(function(p){el('polygon',{class:'zl',points:P(pr,p),fill:z.c,stroke:z.c},G)});var s=document.createElement('span');s.innerHTML='<i style="background:'+z.c+'"></i>'+z.n;lg.appendChild(s)});
+ v.rivers.forEach(function(rv){var pts=P(pr,rv.ps);el('polyline',{class:'route',points:pts,stroke:rv.c,'stroke-width':vw*0.007},G);
+  var q=pr(rv.lx,rv.ly);var t=el('text',{class:'lbl',x:q[0],y:q[1],style:'font-size:'+fs*0.95+'px;font-style:italic'},G);t.textContent=rv.n;
+  if(!quiz){var h=el('polyline',{class:'route hit',points:pts},G);h.onclick=function(){show(rv)}}});
+ v.labs.forEach(function(l){var q=pr(l[1],l[2]);var t=el('text',{class:'cl',x:q[0],y:q[1],'text-anchor':'middle',style:'font-size:'+fs*0.85+'px'},G);t.textContent=l[0]});
+ if(quiz){ask();return}
+ v.pts.forEach(function(p){var q=pr(p.lo,p.la);el('circle',{class:'city',cx:q[0],cy:q[1],r:r},G);
+  var right=q[0]>vb[0]+vw*0.82||p.side==='l';
+  var t=el('text',{class:'lbl',x:q[0]+(right?-r*1.8:r*1.8),y:q[1]+fs*0.35,'text-anchor':right?'end':'start',style:'font-size:'+fs+'px'},G);t.textContent=p.n;
+  var h=el('circle',{cx:q[0],cy:q[1],r:r*2.6,fill:'transparent',style:'cursor:pointer'},G);h.onclick=function(){show(p)}});
+ pn.innerHTML=v.intro;
+}
+function ask(){
+ var a=L[cur].pts;tgt=a[Math.floor(Math.random()*a.length)];
+ pn.innerHTML='<div class="q"></div><div class="fb" id="fb"></div><div class="hint">Счёт: '+sc+' из '+tot+'. Нажми на карте в нужное место (вкладка выбрана сверху: '+L[cur].n+').</div>';
+ pn.children[0].textContent='Где находится: '+tgt.n+'?  ('+tgt.d+')';
+}
+svg.addEventListener('click',function(e){
+ if(!quiz||!tgt)return;
+ var pt=svg.createSVGPoint();pt.x=e.clientX;pt.y=e.clientY;var m=pt.matrixTransform(svg.getScreenCTM().inverse());
+ var v=L[cur],q=v.pr(tgt.lo,tgt.la),dx=m.x-q[0],dy=m.y-q[1],d=Math.sqrt(dx*dx+dy*dy);tot++;
+ var ok=d<v.vb[2]*0.045;if(ok)sc++;
+ el('circle',{class:ok?'tgt':'miss',cx:m.x,cy:m.y,r:v.vb[2]*0.012},G);
+ if(!ok)el('circle',{class:'tgt',cx:q[0],cy:q[1],r:v.vb[2]*0.02},G);
+ var fb=document.getElementById('fb');fb.className='fb '+(ok?'ok':'bad');fb.textContent=ok?'Верно!':'Не совсем — правильное место обведено зелёным.';
+ var old=tgt;tgt=null;
+ var b=document.createElement('button');b.className='btn';b.textContent='Дальше';b.onclick=function(){draw()};pn.appendChild(b);
+ pn.querySelector('.hint').textContent='Счёт: '+sc+' из '+tot+'. '+old.t;
+});
+draw();
+})();
+</script></div></body></html>
