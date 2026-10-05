@@ -1,0 +1,67 @@
+<!doctype html><html lang="ru"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Интерактивная лента времени</title><link rel="stylesheet" href="style.css">
+<style>
+body{margin:0}.wrap{max-width:820px;margin:0 auto;padding:16px 16px 64px}
+.nav{display:flex;gap:16px;flex-wrap:wrap}.nav a{min-height:44px;display:inline-flex;align-items:center;font-weight:600;text-decoration:none}
+h1{font-size:26px;margin:4px 0 8px}
+.row{display:flex;gap:8px;flex-wrap:wrap;margin:8px 0}
+.chip,.tab{font:inherit;border:1px solid var(--bd);background:var(--sf);color:var(--tx);border-radius:999px;padding:0 14px;min-height:44px;cursor:pointer}
+.chip.on,.tab.on{background:var(--bl);color:#fff;border-color:var(--bl)}
+.axis{position:relative;margin:20px 0 0 56px;padding-left:24px;border-left:3px solid var(--bd)}
+.ev{position:relative;margin:0 0 14px;padding:12px 14px;border:1px solid var(--bd);border-radius:12px;background:var(--sf);cursor:pointer}
+.ev::before{content:'';position:absolute;left:-33px;top:18px;width:15px;height:15px;border-radius:50%;background:var(--c);border:3px solid var(--bg)}
+.yr{position:absolute;left:-102px;top:12px;width:62px;text-align:right;font-weight:700;font-size:15px;color:var(--tx)}
+.ev.big{border-color:var(--c);box-shadow:0 0 0 1px var(--c) inset}
+.ev.big .yr{font-size:17px}
+.hk{margin-top:6px;color:var(--tx2);font-size:14.5px;display:none}.ev.open .hk{display:block}
+.known{float:right;font:inherit;border:1px solid var(--bd);background:var(--bg);color:var(--tx);border-radius:8px;min-height:36px;padding:0 10px;cursor:pointer}
+.ev.k{opacity:.6}.ev.k .known{background:var(--grS);border-color:var(--gr)}
+.cover{filter:blur(7px);user-select:none}
+.stat{color:var(--tx2);font-size:14px}
+.btn{font:inherit;border:0;border-radius:8px;background:var(--bl);color:#fff;min-height:44px;padding:0 18px;font-weight:600;cursor:pointer}
+.game{border:1px solid var(--bd);border-radius:12px;padding:16px;background:var(--sf);margin-top:12px}
+.opt{display:block;width:100%;text-align:left;font:inherit;margin:6px 0;border:1px solid var(--bd);background:var(--bg);color:var(--tx);border-radius:10px;min-height:48px;padding:8px 12px;cursor:pointer}
+.opt.ok{background:var(--grS);border-color:var(--gr)}.opt.bad{background:var(--rdS);border-color:var(--rd)}
+@media(max-width:520px){.axis{margin-left:46px}.yr{left:-86px;width:52px;font-size:13px}.ev::before{left:-33px}}
+</style></head><body><div class="wrap">
+<div class="nav"><a href="index.html">← К оглавлению</a><a href="map.html">🧭 Карты</a></div>
+<h1>🗓️ Лента времени</h1>
+<div class="row" id="modes"><button class="tab on" data-m="read">Читаем</button><button class="tab" data-m="test">Прячем события</button><button class="tab" data-m="game">Игра: когда это было?</button></div>
+<div class="row" id="filt"></div>
+<div class="stat" id="stat"></div>
+<div id="view"></div>
+</div>
+<script>
+(function(){
+var D=[{"d":"1453","y":1453,"e":"Османы берут Константинополь, падает Византия","h":"Путь на Восток по суше перерезан → ищем морской","big":false,"ch":"Глава I. Мир открывается"},{"d":"1488","y":1488,"e":"Португальцы обходят южную оконечность Африки","h":"Первый шаг на пути в Индию","big":false,"ch":"Глава I. Мир открывается"},{"d":"1492","y":1492,"e":"Колумб открывает Америку","h":"«Четырнадцать-девяносто два — Колумб, Америка, ура!» (придумайте свою рифму)","big":true,"ch":"Глава I. Мир открывается"},{"d":"1498","y":1498,"e":"Васко да Гама добирается до Индии морем","h":"Дорога вокруг Африки найдена","big":false,"ch":"Глава I. Мир открывается"},{"d":"1514","y":1514,"e":"Чалдыранская битва: османы бьют Иран","h":"Пушки решили исход","big":false,"ch":"Глава III. Азия и Африка"},{"d":"1517","y":1517,"e":"Лютер выступает против индульгенций — начало Реформации","h":"«Пятнадцать-семнадцать — церковь раскололась»","big":true,"ch":"Глава II. Европа меняется"},{"d":"1519–1522","y":1519,"e":"Кругосветное плавание Магеллана","h":"Три года и обратно; сам Магеллан погиб в пути","big":false,"ch":"Глава I. Мир открывается"},{"d":"1519–1521","y":1519,"e":"Кортес завоёвывает ацтеков","h":"Конкиста: Мексика","big":false,"ch":"Глава I. Мир открывается"},{"d":"1520–1566","y":1520,"e":"Сулейман I Великолепный в Османской империи","h":"Вершина османского могущества","big":false,"ch":"Глава III. Азия и Африка"},{"d":"1524–1525","y":1524,"e":"Крестьянская война в Германии","h":"Реформация задела и простых людей","big":false,"ch":"Глава II. Европа меняется"},{"d":"1526","y":1526,"e":"Бабур основывает империю Великих Моголов","h":"Монгольская кровь, индийская земля","big":false,"ch":"Глава III. Азия и Африка"},{"d":"1532–1535","y":1532,"e":"Писарро завоёвывает империю инков","h":"Конкиста: Перу, серебро Потоси","big":false,"ch":"Глава I. Мир открывается"},{"d":"1543","y":1543,"e":"Коперник: Солнце в центре мира","h":"Начало Научной революции","big":false,"ch":"Глава II. Европа меняется"},{"d":"1555","y":1555,"e":"Аугсбургский мир: «чья власть, того и вера»","h":"Мир между лютеранами и католиками в Германии","big":false,"ch":"Глава II. Европа меняется"},{"d":"1556–1598","y":1556,"e":"Король Филипп II правит Испанией","h":"Расцвет Испании и начало её упадка","big":false,"ch":"Глава II. Европа меняется"},{"d":"1558–1603","y":1558,"e":"Королева Елизавета I в Англии","h":"Золотой век Англии, Шекспир","big":false,"ch":"Глава II. Европа меняется"},{"d":"1566","y":1566,"e":"Начало восстания Нидерландов против Испании","h":"Рождение республики-торговца","big":false,"ch":"Глава II. Европа меняется"},{"d":"1569","y":1569,"e":"Люблинская уния: Польша + Литва = Речь Посполитая","h":"«Общее дело» двух стран","big":false,"ch":"Глава II. Европа меняется"},{"d":"1572","y":1572,"e":"Варфоломеевская ночь во Франции","h":"Резня гугенотов, Религиозные войны","big":false,"ch":"Глава II. Европа меняется"},{"d":"1588","y":1588,"e":"Гибель «Непобедимой армады»","h":"Англия побеждает Испанию на море","big":false,"ch":"Глава II. Европа меняется"},{"d":"1598","y":1598,"e":"Нантский эдикт Генриха IV","h":"Во Франции терпимость к гугенотам","big":false,"ch":"Глава II. Европа меняется"},{"d":"1603","y":1603,"e":"Токугава Иэясу — начало эпохи сёгунов","h":"Япония объединена","big":false,"ch":"Глава III. Азия и Африка"},{"d":"1607","y":1607,"e":"Первая постоянная английская колония в Северной Америке","h":"Англичане приезжают жить, а не только грабить","big":false,"ch":"Глава I. Мир открывается"},{"d":"1618–1648","y":1618,"e":"Тридцатилетняя война","h":"Первая «общеевропейская» война","big":true,"ch":"Глава II. Европа меняется"},{"d":"1640","y":1640,"e":"Начало Английской революции","h":"Король против парламента","big":false,"ch":"Глава II. Европа меняется"},{"d":"1644","y":1644,"e":"Маньчжуры захватывают Китай (династия Цин)","h":"Конец династии Мин","big":false,"ch":"Глава III. Азия и Африка"},{"d":"1648","y":1648,"e":"Вестфальский мир","h":"Новая система отношений между государствами","big":false,"ch":"Глава II. Европа меняется"},{"d":"1649","y":1649,"e":"Казнь Карла I","h":"Король казнён, республика","big":false,"ch":"Глава II. Европа меняется"},{"d":"1652","y":1652,"e":"Основание Кейптауна","h":"Начало европейской колонизации юга Африки","big":false,"ch":"Глава III. Азия и Африка"},{"d":"1688","y":1688,"e":"Славная революция","h":"Конституционная монархия","big":false,"ch":"Глава II. Европа меняется"}];
+var COL={'Глава I':'#2783DE','Глава II':'#46A171','Глава III':'#D5803B'};
+function col(c){for(var k in COL)if(c.indexOf(k)===0)return COL[k];return '#7D7A75'}
+var KEY='hist7.lenta.v1',known={};try{known=JSON.parse(localStorage.getItem(KEY)||'{}')}catch(e){}
+function save(){try{localStorage.setItem(KEY,JSON.stringify(known))}catch(e){}}
+var chs=[];D.forEach(function(x){if(chs.indexOf(x.ch)<0)chs.push(x.ch)});
+var filter='all',mode='read';
+var fl=document.getElementById('filt'),view=document.getElementById('view'),stat=document.getElementById('stat');
+function chips(){fl.innerHTML='';if(mode==='game')return;[['all','Все']].concat(chs.map(function(c){return [c,c.replace(/^Глава\s+/,'')]})).forEach(function(c){var b=document.createElement('button');b.className='chip'+(filter===c[0]?' on':'');b.textContent=c[1];b.onclick=function(){filter=c[0];chips();render()};fl.appendChild(b)})}
+function list(){return D.filter(function(x){return filter==='all'||x.ch===filter})}
+function render(){ if(mode==='game'){return game()} var L=list();var kn=L.filter(function(x){return known[x.y+x.e]}).length;stat.textContent='Дат: '+L.length+' · выучено: '+kn;
+ view.innerHTML='';var ax=document.createElement('div');ax.className='axis';
+ L.forEach(function(x){var id=x.y+x.e;var d=document.createElement('div');d.className='ev'+(x.big?' big':'')+(known[id]?' k':'');d.style.setProperty('--c',col(x.ch));
+  var cv=mode==='test'?' cover':'';
+  d.innerHTML='<span class="yr">'+x.d+'</span><button class="known">'+(known[id]?'✓ знаю':'знаю?')+'</button><div class="'+cv.trim()+'" data-t>'+x.e+'</div><div class="hk"><b>Зацепка:</b> '+x.h+'</div>';
+  d.onclick=function(ev){ if(ev.target.classList.contains('known')){known[id]=!known[id];save();render();return}
+   var t=d.querySelector('[data-t]');t.classList.remove('cover');d.classList.toggle('open')};
+  ax.appendChild(d)});view.appendChild(ax)}
+function shuffle(a){a=a.slice();for(var i=a.length-1;i>0;i--){var j=Math.floor(Math.random()*(i+1));var t=a[i];a[i]=a[j];a[j]=t}return a}
+var sc=0,tot=0;
+function game(){ var x=D[Math.floor(Math.random()*D.length)];var ys=[x.d];var pool=shuffle(D.filter(function(z){return z.d!==x.d&&Math.abs(z.y-x.y)<80}));if(pool.length<3)pool=shuffle(D.filter(function(z){return z.d!==x.d}));
+ for(var i=0;ys.length<4&&i<pool.length;i++)if(ys.indexOf(pool[i].d)<0)ys.push(pool[i].d);ys=shuffle(ys);
+ stat.textContent='Верно: '+sc+' из '+tot;
+ view.innerHTML='<div class="game"><div style="font-size:18px;font-weight:600">'+x.e+'</div><div id="o"></div><div id="fb" aria-live="polite" style="margin-top:8px"></div></div>';
+ var o=document.getElementById('o'),done=false;
+ ys.forEach(function(y){var b=document.createElement('button');b.className='opt';b.textContent=y;b.onclick=function(){if(done)return;done=true;tot++;var good=y===x.d;if(good)sc++;b.classList.add(good?'ok':'bad');
+  [].forEach.call(o.children,function(c){if(c.textContent===x.d)c.classList.add('ok')});
+  var fb=document.getElementById('fb');fb.innerHTML=(good?'✅ Верно! ':'❌ Нет, '+x.d+'. ')+'<span style="color:var(--tx2)">'+x.h+'</span><br><button class="btn" style="margin-top:8px" id="nx">Дальше</button>';stat.textContent='Верно: '+sc+' из '+tot;document.getElementById('nx').onclick=game};o.appendChild(b)})}
+document.querySelectorAll('#modes .tab').forEach(function(t){t.onclick=function(){document.querySelectorAll('#modes .tab').forEach(function(x){x.classList.toggle('on',x===t)});mode=t.dataset.m;chips();render()}});
+chips();render();
+})();
+</script></body></html>
