@@ -44,45 +44,6 @@ jobs:
           done
           echo "$ANDROID_KEYSTORE_B64" | base64 -d > "$RUNNER_TEMP/history7-release.jks"
           chmod 600 "$RUNNER_TEMP/history7-release.jks"
-      - name: Verify release signing key
-        shell: bash
-        env:
-          ANDROID_KEYSTORE_PATH: ${{ runner.temp }}/history7-release.jks
-          ANDROID_KEYSTORE_PASSWORD: ${{ secrets.ANDROID_KEYSTORE_PASSWORD }}
-          ANDROID_KEY_ALIAS: ${{ secrets.ANDROID_KEY_ALIAS }}
-          ANDROID_KEY_PASSWORD: ${{ secrets.ANDROID_KEY_PASSWORD }}
-        run: |
-          set -euo pipefail
-
-          echo "=== Keystore file ==="
-          ls -l "$ANDROID_KEYSTORE_PATH"
-          sha256sum "$ANDROID_KEYSTORE_PATH"
-
-          echo "=== Verify keystore + alias ==="
-          keytool \
-            -list \
-            -keystore "$ANDROID_KEYSTORE_PATH" \
-            -storepass "$ANDROID_KEYSTORE_PASSWORD" \
-            -alias "$ANDROID_KEY_ALIAS"
-
-          echo "=== Verify private key password ==="
-
-          mkdir -p "$RUNNER_TEMP/sign-test"
-          echo test > "$RUNNER_TEMP/sign-test/test.txt"
-
-          jar cf "$RUNNER_TEMP/sign-test/test.jar" \
-            -C "$RUNNER_TEMP/sign-test" test.txt
-
-          jarsigner \
-            -keystore "$ANDROID_KEYSTORE_PATH" \
-            -storepass "$ANDROID_KEYSTORE_PASSWORD" \
-            -keypass "$ANDROID_KEY_PASSWORD" \
-            "$RUNNER_TEMP/sign-test/test.jar" \
-            "$ANDROID_KEY_ALIAS"
-
-          jarsigner -verify "$RUNNER_TEMP/sign-test/test.jar"
-
-          echo "=== Signing key OK ==="
           
       - name: Build release APK and AAB
         shell: bash
