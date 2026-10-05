@@ -22,6 +22,16 @@
  var menu=document.getElementById('menu'),side=document.getElementById('side');
  if(menu)menu.addEventListener('click',function(){side.classList.toggle('open')});
  document.addEventListener('click',function(e){if(side&&side.classList.contains('open')&&!side.contains(e.target)&&e.target!==menu)side.classList.remove('open')});
+ // карты: ссылки в боковом меню всех страниц и кнопки на главной
+ var MAPS=[['🧭 Карта открытий','map.html'],['🏰 Карта Европы','europe.html'],['🕌 Азия и Африка','asia.html']];
+ if(side&&!side.querySelector('a[href$="map.html"]')){
+  var an=side.querySelector('a[href$="timeline.html"]'),ref=an?an.nextSibling:side.querySelector('.chh');
+  MAPS.forEach(function(m){var a=document.createElement('a');a.className='nl';a.href=BASE+m[1];a.textContent=m[0];side.insertBefore(a,ref)});
+ }
+ var qk=document.querySelector('.quick');
+ if(qk&&!qk.querySelector('a[href$="map.html"]')){
+  MAPS.forEach(function(m){var a=document.createElement('a');a.className='btn ghost';a.href=BASE+m[1];a.textContent=m[0];qk.appendChild(a)});
+ }
  // quiz
  var quiz=document.querySelector('.quiz');
  if(quiz){
