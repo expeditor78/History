@@ -2,7 +2,7 @@
 <title>Карта: Великие географические открытия</title><link rel="stylesheet" href="style.css">
 <style>
 body{margin:0}.wrap{max-width:1000px;margin:0 auto;padding:16px 16px 64px}
-.nav{display:flex;align-items:center;gap:12px;margin-bottom:8px}.nav a{min-height:44px;display:inline-flex;align-items:center;font-weight:600;text-decoration:none}
+.nav{display:flex;align-items:center;gap:12px;margin-bottom:8px;flex-wrap:wrap}.nav a{min-height:44px;display:inline-flex;align-items:center;font-weight:600;text-decoration:none}
 h1{font-size:26px;margin:4px 0 8px}
 .tabs,.chips,.regs{display:flex;gap:8px;flex-wrap:wrap;margin:8px 0}
 .tab,.chip,.reg{font:inherit;border:1px solid var(--bd);background:var(--sf);color:var(--tx);border-radius:999px;padding:0 14px;min-height:44px;cursor:pointer}
@@ -23,7 +23,7 @@ svg{display:block;width:100%;height:auto;touch-action:manipulation}
 .tgt{fill:none;stroke:var(--gr);stroke-width:2}.miss{fill:none;stroke:var(--rd);stroke-width:2}
 @media(prefers-color-scheme:dark){#mapbox{background:#1d3a52}.land{fill:#3a3a35;stroke:#6b6a60}.sea2{fill:#1d3a52;stroke:#6b6a60}.lbl{fill:#fff;stroke:#191919}.city{fill:#191919;stroke:#fff}.cl{fill:rgba(255,255,255,.25)}.grid{stroke:rgba(255,255,255,.08)}}
 </style></head><body><div class="wrap">
-<div class="nav"><a href="index.html">← К оглавлению</a><a href="lenta.html">🗓️ Лента времени</a></div>
+<div class="nav"><a href="index.html">← К оглавлению</a><a href="europe.html">🏰 Европа XVI–XVII вв.</a><a href="lenta.html">🗓️ Лента времени</a></div>
 <h1>🧭 Великие географические открытия</h1>
 <div class="tabs"><button class="tab on" data-m="explore">Изучаем маршруты</button><button class="tab" data-m="quiz">Игра: найди на карте</button></div>
 <div class="chips" id="chips"></div>
@@ -65,12 +65,12 @@ for(var k in LAND)el('polygon',{class:'land',points:P(LAND[k])});
 for(var k in SEAS)el('polygon',{class:'sea2',points:P(SEAS[k])});
 [['СЕВЕРНАЯ АМЕРИКА',-105,45],['ЮЖНАЯ АМЕРИКА',-60,-15],['ЕВРОПА',15,50],['АФРИКА',20,5],['АЗИЯ',90,50],['АВСТРАЛИЯ',134,-26]].forEach(function(c){var t=el('text',{class:'cl',x:X(c[1]),y:Y(c[2]),'text-anchor':'middle'});t.textContent=c[0]});
 var ROUTES=[
- {id:'dias',n:'Бартоломеу Диаш',y:'1487–1488',c:'#8E5BD1',who:'Португалия',pts:[[-9,38.7],[-18,25],[-14,0],[-5,-20],[10,-30],[20,-36],[26.5,-34]],t:'Португалец Диаш первым обошёл южную окончность Африки (мыс Бурь, позже «Доброй Надежды»).',r:'Первый шаг на пути в Индию морем.'},
+ {id:'dias',n:'Бартоломеу Диаш',y:'1487–1488',c:'#8E5BD1',who:'Португалия',pts:[[-9,38.7],[-18,25],[-14,0],[-5,-20],[10,-30],[20,-36],[26.5,-34]],t:'Португалец Диаш первым обошёл южную оконечность Африки (мыс Бурь, позже «Доброй Надежды»).',r:'Первый шаг на пути в Индию морем.'},
  {id:'columbus',n:'Христофор Колумб',y:'1492',c:'#E56458',who:'Испания',pts:[[-6.9,37.2],[-15.5,28],[-35,26],[-55,25],[-74.5,24]],t:'Испанские корабли «Санта-Мария», «Пинта», «Нинья» идут на запад, чтобы достичь Индии. Выходят на Багамы.',r:'Европа открывает Америку. Колумб до конца жизни считал, что попал в Азию.'},
  {id:'cabot',n:'Джон Кабот',y:'1497',c:'#46A171',who:'Англия',pts:[[-2.6,51.4],[-15,53],[-30,52],[-45,50],[-55.5,48]],t:'Итальянец на английской службе добирается до берегов Северной Америки (Ньюфаундленд).',r:'Основа будущих английских прав на Северную Америку.'},
  {id:'gama',n:'Васко да Гама',y:'1497–1499',c:'#2783DE',who:'Португалия',pts:[[-9,38.7],[-20,15],[-25,-5],[-18,-25],[0,-36],[18.5,-35],[35,-24],[41,-5],[55,3],[75.8,11.2]],t:'Да Гама обошёл Африку с юга, нанял лоцмана в Малинди и пришёл в Каликут на западном берегу Индии.',r:'Морской путь в Индию открыт; португальская торговля пряностями.'},
- {id:'magellan',n:'Фернан Магеллан',y:'1519–1522',c:'#D5803B',who:'Испания',pts:[[-6,37],[-25,10],[-35,-12],[-43,-23],[-60,-40],[-70,-53],[-100,-45],[-130,-30],[-160,-10],[-190,5],[-215,13],[-236,10],[-233,0],[-235,-9],[-270,-20],[-310,-35],[-340,-35],[-375,10],[-366,37]],t:'Пять кораблей выходят из Севильи, проходят пролив у южной окончности Америки, пересекают Тихий океан и доходят до Филиппин. Магеллан гибнет там; домой возвращается один корабль из пяти.',r:'Первое кругосветное плавание: доказано, что Земля — шар, а океаны соединены.'},
- {id:'cortes',n:'Эрнан Кортес',y:'1519–1521',c:'#C2185B',who:'Испания',pts:[[-82,22],[-90,20],[-96,19],[-99,19.4]],t:'Конкистадор высаживается у Веракруса и идёт на Теночтитлан — столицу ацтеков.',r:'Ацтекская держава падает, начинается испанская Новая Испания (Мексика).'},
+ {id:'magellan',n:'Фернан Магеллан',y:'1519–1522',c:'#D5803B',who:'Испания',pts:[[-6,37],[-25,10],[-35,-12],[-43,-23],[-55,-42],[-70,-53],[-100,-45],[-130,-30],[-160,-10],[-190,5],[-215,13],[-236,10],[-233,0],[-235,-9],[-270,-20],[-310,-35],[-340,-35],[-375,10],[-366,37]],t:'Пять кораблей выходят из Севильи, проходят пролив у южной оконечности Америки, пересекают Тихий океан и доходят до Филиппин. Магеллан гибнет там; домой возвращается один корабль из пяти.',r:'Первое кругосветное плавание: доказано, что Земля — шар, а океаны соединены.'},
+ {id:'cortes',n:'Эрнан Кортес',y:'1519–1521',c:'#C2185B',who:'Испания',pts:[[-82,22],[-90,20],[-96,19],[-99,19.4]],t:'Конквистадор высаживается у Веракруса и идёт на Теночтитлан — столицу ацтеков.',r:'Ацтекская держава падает, начинается испанская Новая Испания (Мексика).'},
  {id:'pizarro',n:'Франсиско Писарро',y:'1532–1535',c:'#00897B',who:'Испания',pts:[[-79.5,9],[-80,-3],[-79,-7],[-76,-12]],t:'Из Панамы отряд Писарро идёт в горы Перу, пленяет вождя инков в Кахамарке и захватывает Куско.',r:'Падение империи инков; серебро Потоси идёт в Европу.'},
  {id:'dezhnev',n:'Семён Дежнёв',y:'1648',c:'#5D6D7E',who:'Россия',pts:[[160,69],[170,69.5],[180,67],[-170,66],[-169.5,65.6]],t:'Русские казаки обошли Чукотский полуостров и прошли пролив между Азией и Америкой.',r:'Открыт пролив, позже названный Беринговым.'}
 ];
@@ -101,7 +101,7 @@ function select(id){ ROUTES.forEach(function(r){var on=r.id===id;nodes[r.id].p.c
  if(!matchMedia('(prefers-reduced-motion:reduce)').matches){pp.style.transition='stroke-dashoffset 2.2s ease';}pp.style.strokeDashoffset=0;
  panel.innerHTML='<h2>'+r.n+' <span style="color:var(--tx2);font-weight:400">· '+r.y+'</span></h2><div class="d">Страна: '+r.who+'</div><p>'+r.t+'</p><p><b>Итог:</b> '+r.r+'</p><button class="btn" id="all">Показать все маршруты</button>';
  document.getElementById('all').onclick=reset}
-function reset(){ROUTES.forEach(function(r){nodes[r.id].p.classList.remove('act');nodes[r.id].g.classList.remove('dim');nodes[r.id].p.style.strokeDasharray='';r.btn.classList.remove('sel')});panel.innerHTML='<p>Нажмите на маршрут на карте или на кнопку выше — появится описание, дата и итог. Область просмотра меняйте кнопками ниже.</p>'}
+function reset(){ROUTES.forEach(function(r){nodes[r.id].p.classList.remove('act');nodes[r.id].g.classList.remove('dim');nodes[r.id].p.style.strokeDasharray='';r.btn.classList.remove('sel')});panel.innerHTML='<p>Нажмите на маршрут на карте или на кнопку выше — появится описание, дата и итог. Сменить область просмотра можно кнопками «Регион».</p>'}
 var REG=[['Весь мир','0 30 1080 420'],['Атлантика','180 40 400 300'],['Америка','60 50 340 330'],['Африка и Индия','480 90 360 330'],['Азия и Тихий океан','680 60 400 360']];
 var regs=document.getElementById('regs');REG.forEach(function(r){var b=document.createElement('button');b.className='reg';b.textContent=r[0];b.onclick=function(){svg.setAttribute('viewBox',r[1])};regs.appendChild(b)});
 var PL=CITIES.filter(function(c){return c[0]!=='Малинди'});
