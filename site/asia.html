@@ -1,0 +1,140 @@
+<!doctype html><html lang="ru"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Азия и Африка XVI–XVII вв. — карта</title><link rel="stylesheet" href="style.css">
+<style>
+body{margin:0}.wrap{max-width:1000px;margin:0 auto;padding:16px 16px 64px}
+.nav{display:flex;align-items:center;gap:12px;margin-bottom:8px}.nav a{min-height:44px;display:inline-flex;align-items:center;font-weight:600;text-decoration:none}
+h1{font-size:26px;margin:4px 0 8px}
+.tabs,.chips,.regs{display:flex;gap:8px;flex-wrap:wrap;margin:8px 0}
+.tab,.chip,.reg{font:inherit;border:1px solid var(--bd);background:var(--sf);color:var(--tx);border-radius:999px;padding:0 14px;min-height:44px;cursor:pointer}
+.tab.on{background:var(--bl);color:#fff;border-color:var(--bl)}
+.chip{display:inline-flex;align-items:center;gap:8px}.chip i{width:14px;height:4px;border-radius:2px;background:var(--c)}.chip.off{opacity:.45}.chip.sel{border-color:var(--c);box-shadow:0 0 0 2px var(--c) inset}
+.reg{min-height:36px;font-size:14px}
+#mapbox{border:1px solid var(--bd);border-radius:12px;overflow:hidden;background:#cfe6f5}
+svg{display:block;width:100%;height:auto;touch-action:manipulation}
+.land{fill:#EADFC8;stroke:#B9A98A;stroke-width:.6}.sea2{fill:#cfe6f5;stroke:#B9A98A;stroke-width:.4}
+.grid{stroke:rgba(0,0,0,.08);stroke-width:.4}
+.route{fill:none;stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round;cursor:pointer}.route.hit{stroke:transparent;stroke-width:14}
+.route.dim{opacity:.18}.route.act{stroke-width:3.4}
+.city{fill:#fff;stroke:#2C2C2B;stroke-width:1.2;cursor:pointer}.lbl{font:600 8px -apple-system,Arial,sans-serif;fill:#2C2C2B;paint-order:stroke;stroke:#fff;stroke-width:2.4px;pointer-events:none}
+.cl{font:700 9px Arial;fill:rgba(0,0,0,.28);letter-spacing:2px;pointer-events:none}
+.panel{border:1px solid var(--bd);border-radius:12px;padding:16px;margin-top:12px;background:var(--sf)}.panel h2{margin:0 0 4px;font-size:20px}.panel .d{color:var(--tx2);font-size:14px;margin-bottom:8px}.panel p{margin:6px 0}
+.btn{font:inherit;cursor:pointer;border:0;border-radius:8px;background:var(--bl);color:#fff;min-height:44px;padding:0 18px;font-weight:600}
+.q{font-size:18px;font-weight:600}.fb{min-height:24px;font-weight:600}.ok{color:var(--gr)}.bad{color:var(--rd)}
+.tgt{fill:none;stroke:var(--gr);stroke-width:2}.miss{fill:none;stroke:var(--rd);stroke-width:2}
+@media(prefers-color-scheme:dark){#mapbox{background:#1d3a52}.land{fill:#3a3a35;stroke:#6b6a60}.sea2{fill:#1d3a52;stroke:#6b6a60}.lbl{fill:#fff;stroke:#191919}.city{fill:#191919;stroke:#fff}.cl{fill:rgba(255,255,255,.25)}.grid{stroke:rgba(255,255,255,.08)}}
+
+.zl{fill-opacity:.38;stroke-width:1.2}.lg{display:flex;gap:10px;flex-wrap:wrap;margin:6px 0;font-size:14px}.lg span{display:inline-flex;align-items:center;gap:6px}.lg i{width:14px;height:14px;border-radius:3px;display:inline-block}
+.hint{color:var(--tx2);font-size:13px;margin-top:8px}
+</style></head><body><div class="wrap">
+<div class="nav"><a href="index.html">← К оглавлению</a><a href="map.html">🧭 Открытия</a><a href="europe.html">🏰 Европа</a><a href="lenta.html">🗓️ Лента времени</a></div>
+<h1>Азия и Африка, XVI–XVII вв.</h1>
+<p style="color:var(--tx2);margin:0 0 8px">Нажимай на города и события. Границы схематичные — точные смотри в атласе учебника.</p>
+<div class="tabs" id="tabs"></div><div class="lg" id="lg"></div>
+<div id="mapbox"><svg id="svg" viewBox="0 0 850 500" role="img" aria-label="Карта Азии и Африки"></svg></div>
+<div class="panel" id="panel"></div>
+<script>
+(function(){
+var X=function(lo){return (lo+20)*5},Y=function(la){return (60-la)*5};
+function P(pts){return pts.map(function(p){return X(p[0]).toFixed(1)+','+Y(p[1]).toFixed(1)}).join(' ')}
+var LAND={
+ na:[[-168,66],[-162,70],[-140,70],[-125,70],[-95,72],[-82,68],[-78,62],[-65,60],[-56,52],[-66,45],[-70,42],[-76,35],[-81,30],[-80,25],[-84,30],[-90,29],[-97,26],[-97,20],[-90,21],[-87,21],[-88,16],[-83,15],[-83,10],[-78,8],[-85,10],[-92,15],[-105,20],[-110,23],[-115,30],[-118,34],[-124,40],[-124,48],[-130,55],[-140,60],[-150,61],[-158,57],[-165,60]],
+ sa:[[-78,8],[-72,12],[-62,10],[-52,5],[-50,0],[-44,-2],[-35,-6],[-39,-14],[-41,-22],[-48,-26],[-53,-34],[-58,-38],[-65,-41],[-66,-47],[-69,-52],[-68,-55],[-73,-52],[-74,-45],[-72,-35],[-71,-20],[-76,-14],[-81,-5],[-80,0],[-77,4]],
+ gl:[[-55,60],[-45,60],[-20,70],[-20,80],[-60,82],[-70,76],[-55,66]],
+ eu:[[-9,37],[-9,43],[-2,43.5],[-4,48],[2,51],[8,54],[8,58],[5,59],[6,62],[15,68],[25,71],[40,67],[44,68],[60,69],[70,73],[100,77],[113,74],[140,72],[160,70],[180,68],[180,65],[165,60],[156,51],[143,59],[135,55],[140,48],[130,42],[127,38],[129,35],[126,35],[125,40],[122,40],[119,38],[122,31],[120,25],[110,20],[108,21],[106,10],[100,13],[99,8],[103,1.5],[98,8],[97,17],[94,18],[92,22],[88,21],[80,15],[78,8],[73,16],[72,21],[67,24],[57,25],[56,27],[50,30],[48,29],[50,26],[56,24],[59,22],[52,16],[44,12],[43,15],[39,21],[35,28],[33,30],[35,32],[36,36],[30,36],[27,37],[26,40],[23,40],[24,38],[22,36.5],[20,40],[19,42],[14,45],[12,45],[18,40],[16,38],[12,42],[9,44],[3,43],[0,39],[-2,37],[-6,36]],
+ af:[[-17,21],[-16,28],[-9,32],[-6,36],[10,37],[11,33],[20,31],[32,31],[34,28],[38,19],[43,12],[51,12],[48,5],[40,-3],[39,-10],[40,-15],[35,-24],[32,-29],[27,-34],[20,-35],[17,-30],[12,-17],[13,-8],[9,-1],[9,4],[5,6],[-2,5],[-8,4],[-13,8],[-17,14]],
+ mg:[[44,-25],[47,-25],[50,-15],[49,-12],[44,-17]],
+ au:[[114,-22],[122,-18],[130,-12],[137,-12],[142,-11],[146,-19],[153,-26],[150,-37],[141,-38],[135,-34],[124,-34],[115,-34]],
+ jp:[[130,31],[135,34],[140,36],[142,40],[141,45],[139,38],[133,35]],
+ uk:[[-5,50],[1,51],[2,53],[-2,57],[-5,58],[-6,55],[-3,54],[-5,52]],
+ ie:[[-10,52],[-6,52],[-6,55],[-10,54]],
+ is:[[-24,65],[-14,65],[-14,66.5],[-22,66.5]],
+ cu:[[-85,22],[-77,20],[-74,20],[-80,23]],
+ hi:[[-74,18],[-69,18.5],[-69,19.8],[-72,19.8]],
+ sm:[[95,5],[106,-6],[103,-5],[96,2]],
+ jv:[[105,-6],[114,-8],[106,-7]],
+ bo:[[109,1],[117,7],[119,1],[115,-4],[110,-3]],
+ ph:[[120,18],[122,17],[126,8],[122,7],[121,13]],
+ nz:[[172,-34],[178,-38],[175,-41],[167,-46],[171,-43]],
+ nz2:[[-170,66],[-169,65],[-168,65.5]]
+};
+var SEAS={ bs:[[28,41],[41,41],[41,45],[34,46],[30,46]], med_:[[27,41],[29,41],[29,40.5]], balt:[[10,55],[14,54],[21,55],[24,58],[30,60],[23,60],[18,60],[17,57],[12,56]], cas:[[47,37],[54,37],[54,45],[47,45]], red:[[33,28],[35,28],[43,13],[40,15]] };
+
+var svg=document.getElementById('svg'),NS='http://www.w3.org/2000/svg';
+function el(n,a,p){var e=document.createElementNS(NS,n);for(var k in a)e.setAttribute(k,a[k]);(p||svg).appendChild(e);return e}
+for(var lo=-20;lo<=150;lo+=10){el('line',{class:'grid',x1:X(lo),x2:X(lo),y1:0,y2:500})}
+for(var la=-40;la<=60;la+=10){el('line',{class:'grid',x1:0,x2:850,y1:Y(la),y2:Y(la)})}
+for(var k in LAND)el('polygon',{class:'land',points:P(LAND[k])});
+for(var k in SEAS)el('polygon',{class:'sea2',points:P(SEAS[k])});
+var G=el('g',{});
+var OT='#D5803B',IR='#9B6BD1',MG='#46A171',CH='#E56458',JP='#2783DE',AF='#C2A21E';
+var L={
+ ott:{n:'Османы и Иран',vb:[70,20,340,200],zones:[
+  {n:'Османская империя (при Сулеймане I)',c:OT,ps:[[[16,45],[23,47],[30,45],[41,42],[44,40],[45,37],[48,31],[44,29],[35,28],[33,31],[30,31],[26,35],[22,36.5],[20,40],[19,42]],[[1,36],[10,37.2],[11,33],[20,31],[20,29],[8,30],[0,32]]]},
+  {n:'Иран Сефевидов',c:IR,ps:[[[45,39],[54,38],[61,36],[61,30],[57,26],[52,27],[48,30],[46,34]]]}],
+  pts:[
+  {n:'Стамбул',lo:29,la:41,d:'1453 — столица османов',t:'Константинополь взят османами в 1453 г. Империей управляют султан, великий везир и совет — диван; опора армии — янычары.'},
+  {n:'Чалдыран',lo:44.4,la:39.1,d:'1514',t:'Султан Селим I Грозный разбил персов (Иран Сефевидов). Вражда усилена религией: Иран — шииты, османы — сунниты.'},
+  {n:'Каир',lo:31.2,la:30,d:'1516–1517',t:'Селим I завоевал Сирию и Египет. При Сулеймане I Великолепном (1520–1566) империя достигла расцвета: Балканы, Венгрия, Северная Африка, Ближний Восток.'},
+  {n:'Исфахан',lo:51.7,la:32.7,d:'Столица Аббаса I',t:'Шах Аббас I Великий (1587–1629) создал новую армию, сделал столицей Исфахан и развил торговлю шёлком. Государство Сефевидов основал Исмаил I в 1501 г.'}]},
+ ind:{n:'Индия',vb:[340,70,340,200],zones:[{n:'Империя Великих Моголов (около 1700 г.)',c:MG,ps:[[[68,35],[75,36],[80,30],[88,27],[92,24],[88,21],[80,15],[77,9],[74,16],[72,21],[67,25]]]}],
+  pts:[
+  {n:'Дели',lo:77.2,la:28.6,d:'1526',t:'Бабур пришёл из Средней Азии, победил делийского султана и основал империю Великих Моголов. Расцвет — при Акбаре (1556–1605), его главная черта — веротерпимость.'},
+  {n:'Агра',lo:78,la:27.2,d:'1632–1653',t:'Шах-Джахан построил Тадж-Махал — мавзолей-мечеть жены. При Аурангзебе (1658–1707) налоги и нетерпимость вызвали восстания, и империя ослабла.'},
+  {n:'Каликут',lo:75.8,la:11.3,d:'Европейцы на побережье',t:'Сюда в 1498 г. пришёл Васко да Гама. Португальцы, затем англичане и французы закрепляются на берегах Индии.'}]},
+ chn:{n:'Китай и Япония',vb:[525,10,325,191],zones:[
+  {n:'Китай (Мин, с 1644 г. — Цин)',c:CH,ps:[[[98,25],[102,35],[100,40],[110,41],[120,41],[122,40],[122,31],[120,25],[110,20],[108,22],[100,22]]]},
+  {n:'Япония',c:JP,ps:[[[130,31],[135,34],[140,36],[142,40],[141,45],[139,38],[133,35]]]}],
+  pts:[
+  {n:'Пекин',lo:116.4,la:39.9,d:'1644',t:'Маньчжуры захватили власть и основали династию Цин (до этого — династия Мин, 1368–1644). При императоре Канси страна стабилизировалась.'},
+  {n:'Нерчинск',lo:116.6,la:52,d:'1689',t:'Нерчинский договор: граница России и Китая по спору из-за Амура.'},
+  {n:'Танэгасима',lo:131,la:30.6,d:'1543',t:'Появление португальцев с огнестрельным оружием в Японии.'},
+  {n:'Киото',lo:135.8,la:35,d:'Резиденция императора',t:'Император (микадо) жил в Киото — он был номинальным главой. Реальная власть — у сёгуна.'},
+  {n:'Эдо',lo:139.7,la:35.7,d:'1603',t:'Токугава Иэясу стал сёгуном — начало эпохи сёгуната и закрытия страны от иностранцев.'},
+  {n:'Нагасаки',lo:129.9,la:32.8,d:'Единственное «окно»',t:'При самоизоляции общение с внешним миром шло только через Нагасаки: с голландцами и китайцами.'}]},
+ afr:{n:'Африка',vb:[0,90,560,330],zones:[
+  {n:'Османский Магриб',c:OT,ps:[[[1,36],[10,37.2],[11,33],[20,31],[20,29],[8,30],[0,32]]]},
+  {n:'Конго',c:MG,ps:[[[12,-4],[18,-4],[18,-9],[13,-9]]]},
+  {n:'Бенин',c:IR,ps:[[[2,7.5],[7,7.5],[7,5.5],[2,5.5]]]},
+  {n:'Эфиопия',c:AF,ps:[[[34,14],[42,14],[42,8],[36,5],[34,9]]]}],
+  pts:[
+  {n:'Алжир',lo:3,la:36.8,d:'Магриб',t:'Магриб — северо-запад Африки. Он попал под власть Османской империи; здесь действовали корсары, например Хайраддин Барбаросса.'},
+  {n:'Бенин',lo:5.6,la:6.3,d:'Западная Африка',t:'Могущественное африканское государство. С середины XVI в. началась массовая работорговля: миллионы людей вывозили в Америку.'},
+  {n:'Конго',lo:14.3,la:-6.3,d:'1506–1543',t:'Король Афонсу I принял христианство и строил отношения с Европой, но португальцы были заняты работорговлей.'},
+  {n:'Гондэр',lo:37.5,la:12.6,d:'1632–1667',t:'Эфиопия — древнее христианское царство. При негусе Фасилидасе здесь строились замки.'},
+  {n:'Кейптаун',lo:18.5,la:-34,d:'1652',t:'Голландцы основали колонию на юге Африки.'}]}
+};
+var cur='ott',quiz=false,sc=0,tot=0,tgt=null;
+var tabs=document.getElementById('tabs'),lg=document.getElementById('lg'),pn=document.getElementById('panel');
+function setVB(v){svg.setAttribute('viewBox',v.join(' '))}
+function mkTabs(){tabs.innerHTML='';Object.keys(L).forEach(function(k){var b=document.createElement('button');b.className='tab'+(!quiz&&cur===k?' on':'');b.textContent=L[k].n;b.onclick=function(){quiz=false;cur=k;draw()};tabs.appendChild(b)});var q=document.createElement('button');q.className='tab'+(quiz?' on':'');q.textContent='🎯 Игра: найди на карте';q.onclick=function(){quiz=true;sc=0;tot=0;draw()};tabs.appendChild(q)}
+function draw(){
+ mkTabs();G.remove();G=el('g',{});
+ var v=quiz?[0,0,850,500]:L[cur].vb;setVB(v);var fs=v[2]*0.019,r=v[2]*0.0075;
+ lg.innerHTML='';
+ if(quiz){ask();return}
+ L[cur].zones.forEach(function(z){z.ps.forEach(function(p){el('polygon',{class:'zl',points:P(p),fill:z.c,stroke:z.c},G)});var s=document.createElement('span');s.innerHTML='<i style="background:'+z.c+'"></i>'+z.n;lg.appendChild(s)});
+ L[cur].pts.forEach(function(p){var c=el('circle',{class:'city',cx:X(p.lo),cy:Y(p.la),r:r},G);var h=el('circle',{cx:X(p.lo),cy:Y(p.la),r:r*2.6,fill:'transparent',style:'cursor:pointer'},G);var t=el('text',{class:'lbl',x:X(p.lo)+r*1.8,y:Y(p.la)+fs*0.35,style:'font-size:'+fs+'px'},G);t.textContent=p.n;h.onclick=function(){show(p)}});
+ pn.innerHTML='<p style="color:var(--tx2);margin:0">Нажми на кружок — появится описание. Вкладки сверху переключают регионы.</p>';
+}
+function show(p){pn.innerHTML='<h2></h2><div class="d"></div><p></p>';pn.children[0].textContent=p.n;pn.children[1].textContent=p.d;pn.children[2].textContent=p.t}
+function all(){var a=[];Object.keys(L).forEach(function(k){a=a.concat(L[k].pts)});return a}
+function ask(){
+ var a=all();tgt=a[Math.floor(Math.random()*a.length)];
+ pn.innerHTML='<div class="q"></div><div class="fb" id="fb"></div><div class="hint">Счёт: '+sc+' из '+tot+'. Нажми на карте в нужное место.</div>';
+ pn.children[0].textContent='Где находится: '+tgt.n+'?  ('+tgt.d+')';
+}
+svg.addEventListener('click',function(e){
+ if(!quiz||!tgt)return;
+ var pt=svg.createSVGPoint();pt.x=e.clientX;pt.y=e.clientY;var m=pt.matrixTransform(svg.getScreenCTM().inverse());
+ var dx=m.x-X(tgt.lo),dy=m.y-Y(tgt.la),d=Math.sqrt(dx*dx+dy*dy);tot++;
+ var ok=d<28;if(ok)sc++;
+ el('circle',{class:ok?'tgt':'miss',cx:m.x,cy:m.y,r:6},G);
+ if(!ok)el('circle',{class:'tgt',cx:X(tgt.lo),cy:Y(tgt.la),r:9},G);
+ var fb=document.getElementById('fb');fb.className='fb '+(ok?'ok':'bad');fb.textContent=ok?'Верно!':'Не совсем — правильное место обведено зелёным.';
+ var old=tgt;tgt=null;
+ var b=document.createElement('button');b.className='btn';b.textContent='Дальше';b.onclick=function(){G.remove();G=el('g',{});ask()};pn.appendChild(b);
+ pn.querySelector('.hint').textContent='Счёт: '+sc+' из '+tot+'. '+old.t;
+});
+draw();
+})();
+</script></div></body></html>
