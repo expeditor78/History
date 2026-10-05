@@ -1,0 +1,117 @@
+<!doctype html><html lang="ru"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Англия — карта</title><link rel="stylesheet" href="style.css">
+<style>
+body{margin:0}.wrap{max-width:1000px;margin:0 auto;padding:16px 16px 64px}
+.nav{display:flex;align-items:center;gap:12px;margin-bottom:8px}.nav a{min-height:44px;display:inline-flex;align-items:center;font-weight:600;text-decoration:none}
+h1{font-size:26px;margin:4px 0 8px}
+.tabs,.chips,.regs{display:flex;gap:8px;flex-wrap:wrap;margin:8px 0}
+.tab,.chip,.reg{font:inherit;border:1px solid var(--bd);background:var(--sf);color:var(--tx);border-radius:999px;padding:0 14px;min-height:44px;cursor:pointer}
+.tab.on{background:var(--bl);color:#fff;border-color:var(--bl)}
+.chip{display:inline-flex;align-items:center;gap:8px}.chip i{width:14px;height:4px;border-radius:2px;background:var(--c)}.chip.off{opacity:.45}.chip.sel{border-color:var(--c);box-shadow:0 0 0 2px var(--c) inset}
+.reg{min-height:36px;font-size:14px}
+#mapbox{border:1px solid var(--bd);border-radius:12px;overflow:hidden;background:#cfe6f5}
+svg{display:block;width:100%;height:auto;touch-action:manipulation}
+.land{fill:#EADFC8;stroke:#B9A98A;stroke-width:.6}.sea2{fill:#cfe6f5;stroke:#B9A98A;stroke-width:.4}
+.grid{stroke:rgba(0,0,0,.08);stroke-width:.4}
+.route{fill:none;stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round;cursor:pointer}.route.hit{stroke:transparent;stroke-width:14}
+.route.dim{opacity:.18}.route.act{stroke-width:3.4}
+.city{fill:#fff;stroke:#2C2C2B;stroke-width:1.2;cursor:pointer}.lbl{font:600 8px -apple-system,Arial,sans-serif;fill:#2C2C2B;paint-order:stroke;stroke:#fff;stroke-width:2.4px;pointer-events:none}
+.cl{font:700 9px Arial;fill:rgba(0,0,0,.28);letter-spacing:2px;pointer-events:none}
+.panel{border:1px solid var(--bd);border-radius:12px;padding:16px;margin-top:12px;background:var(--sf)}.panel h2{margin:0 0 4px;font-size:20px}.panel .d{color:var(--tx2);font-size:14px;margin-bottom:8px}.panel p{margin:6px 0}
+.btn{font:inherit;cursor:pointer;border:0;border-radius:8px;background:var(--bl);color:#fff;min-height:44px;padding:0 18px;font-weight:600}
+.q{font-size:18px;font-weight:600}.fb{min-height:24px;font-weight:600}.ok{color:var(--gr)}.bad{color:var(--rd)}
+.tgt{fill:none;stroke:var(--gr);stroke-width:2}.miss{fill:none;stroke:var(--rd);stroke-width:2}
+@media(prefers-color-scheme:dark){#mapbox{background:#1d3a52}.land{fill:#3a3a35;stroke:#6b6a60}.sea2{fill:#1d3a52;stroke:#6b6a60}.lbl{fill:#fff;stroke:#191919}.city{fill:#191919;stroke:#fff}.cl{fill:rgba(255,255,255,.25)}.grid{stroke:rgba(255,255,255,.08)}}
+
+.zl{fill-opacity:.38;stroke-width:1.2}.lg{display:flex;gap:10px;flex-wrap:wrap;margin:6px 0;font-size:14px}.lg span{display:inline-flex;align-items:center;gap:6px}.lg i{width:14px;height:14px;border-radius:3px;display:inline-block}
+.hint{color:var(--tx2);font-size:13px;margin-top:8px}
+
+svg{max-height:82vh}</style></head><body><div class="wrap">
+<div class="nav"><a href="index.html">← К оглавлению</a><a href="map.html">🧭 Открытия</a><a href="europe.html">🏰 Европа</a><a href="asia.html">🕌 Азия</a><a href="netherlands.html">🌷 Нидерланды</a><a href="lenta.html">🗓️ Лента времени</a></div>
+<h1>Англия: от Тюдоров до конституционной монархии</h1>
+<p style="color:var(--tx2);margin:0 0 8px">К § 11–12. Нажимай на города, реки и точки на карте. Границы схематичные — точные смотри в атласе учебника.</p>
+<div class="tabs" id="tabs"></div><div class="lg" id="lg"></div>
+<div id="mapbox"><svg id="svg" viewBox="0 0 450 540" role="img" aria-label="Карта Англии"></svg></div>
+<div class="panel" id="panel"></div>
+<script>
+(function(){
+var LAND={};
+var svg=document.getElementById('svg'),NS='http://www.w3.org/2000/svg';
+function el(t,a,p){var e=document.createElementNS(NS,t);for(var k in a)e.setAttribute(k,a[k]);(p||svg).appendChild(e);return e}
+var G=el('g',{});
+var BL='#2783DE',RD='#E56458',GR='#46A171';
+var locPr=function(lo,la){return [(lo+10.5)*35,(59-la)*60]};
+var worPr=function(lo,la){return [(lo+9)*25,(58-la)*42]};
+var GB=[[-5.7,50.1],[-4.2,50.35],[-3.4,50.6],[-1.9,50.7],[-1.1,50.8],[0.3,50.75],[1.4,51.15],[1.3,51.4],[0.6,51.4],[1.3,51.8],[1.7,52.6],[1.3,52.95],[0.3,52.9],[0.2,53.3],[-0.2,53.65],[-0.1,54.0],[-1.2,54.6],[-1.6,55.3],[-2.0,55.8],[-2.7,56.0],[-2.5,56.3],[-3.3,56.4],[-2.1,57.1],[-1.8,57.6],[-3.3,57.7],[-4.0,57.6],[-3.9,58.0],[-3.0,58.6],[-5.0,58.6],[-5.2,58.1],[-5.8,57.4],[-5.6,56.5],[-5.7,55.8],[-4.8,55.9],[-5.1,55.3],[-4.9,54.8],[-3.6,54.9],[-3.2,54.3],[-3.0,53.6],[-3.1,53.4],[-4.3,53.3],[-4.5,53.0],[-4.1,52.6],[-4.7,52.1],[-5.2,51.8],[-4.1,51.55],[-3.2,51.4],[-3.0,51.2],[-4.2,51.2],[-5.1,50.6]];
+var IRL=[[-10,51.6],[-9.4,52.2],[-10.3,52.1],[-9.8,53.0],[-10.0,53.7],[-8.5,54.3],[-8.5,55.2],[-7.3,55.3],[-6.0,55.2],[-5.6,54.6],[-6.0,54.0],[-6.1,53.3],[-6.4,52.2],[-8.0,51.8]];
+var CON=[[-2.0,47.3],[-4.5,48.4],[-3.0,48.8],[-1.6,48.7],[-1.3,49.7],[0.2,49.7],[1.5,50.4],[2.3,51.0],[3.5,51.4],[4.2,52.0],[4.8,52.9],[5.5,53.3],[8.5,53.8],[9,56],[20,56],[20,45],[-1.3,45],[-1.1,46.0],[-1.5,46.2],[-2.2,47]];
+var L={
+ loc:{n:'Британия при Тюдорах и Стюартах',pr:locPr,vb:[0,0,450,540],
+  land:[GB,IRL,CON],
+  zones:[
+   {n:'Англия и Уэльс',c:BL,ps:[[[-5.7,50.1],[-4.2,50.35],[-3.4,50.6],[-1.9,50.7],[-1.1,50.8],[0.3,50.75],[1.4,51.15],[1.3,51.4],[0.6,51.4],[1.3,51.8],[1.7,52.6],[1.3,52.95],[0.3,52.9],[0.2,53.3],[-0.2,53.65],[-0.1,54.0],[-1.2,54.6],[-1.6,55.3],[-2.0,55.8],[-2.5,55.3],[-3.6,54.9],[-3.2,54.3],[-3.0,53.6],[-3.1,53.4],[-4.3,53.3],[-4.5,53.0],[-4.1,52.6],[-4.7,52.1],[-5.2,51.8],[-4.1,51.55],[-3.2,51.4],[-3.0,51.2],[-4.2,51.2],[-5.1,50.6]]]},
+   {n:'Шотландия (откуда пришёл Яков I)',c:GR,ps:[[[-2.0,55.8],[-2.7,56.0],[-2.5,56.3],[-3.3,56.4],[-2.1,57.1],[-1.8,57.6],[-3.3,57.7],[-4.0,57.6],[-3.9,58.0],[-3.0,58.6],[-5.0,58.6],[-5.2,58.1],[-5.8,57.4],[-5.6,56.5],[-5.7,55.8],[-4.8,55.9],[-5.1,55.3],[-4.9,54.8],[-3.6,54.9],[-2.5,55.3]]]},
+   {n:'Ирландия',c:RD,ps:[IRL]}],
+  rivers:[],
+  labs:[['АНГЛИЯ',-1.6,52.0],['ШОТЛАНДИЯ',-4.0,57.0],['ИРЛАНДИЯ',-8.0,53.2],['Северное море',2.2,55.0],['Ла-Манш',-1.0,50.2]],
+  intro:'<h2>Англия при Тюдорах и Стюартах</h2><div class="d">1534 → 1588 → 1603 → 1640</div><p><b>1534</b> — Акт о супрематии: король глава англиканской церкви. <b>1558–1603</b> — Елизавета I, <b>1588</b> — гибель Непобедимой армады. <b>1603</b> — к власти приходят Стюарты (Яков I, король Шотландии). <b>1640</b> — Долгий парламент, начало революции.</p><p style="color:var(--tx2)">Нажми на город или район.</p>',
+  pts:[
+  {n:'Лондон',lo:-0.12,la:51.5,d:'Столица',t:'Крупнейший город Европы: население выросло с 50 тысяч примерно до 500 тысяч. Через Лондон шло 9/10 английского экспорта, в основном сукна. Рост связан с морем и торговлей.'},
+  {n:'Эдинбург',lo:-3.19,la:55.95,d:'Шотландия',t:'После смерти бездетной Елизаветы I корона перешла к шотландской династии Стюартов: Яков I (1603–1625) был королём Шотландии.'},
+  {n:'Дублин',lo:-6.26,la:53.35,d:'Ирландия',t:'Ирландия — ещё одна часть британского мира. По заданию учебника найди, кого и где усмирял Кромвель, когда страна стала республикой.'},
+  {n:'Овцеводство',lo:-0.8,la:52.6,d:'Центральная и Восточная Англия',t:'Огораживания: дворяне захватывали общинные земли и пускали их под овечьи пастбища. Крестьяне становились бродягами, батраками, рабочими. Главный экспорт страны — сукно (4/5 экспорта).'}]},
+ wor:{n:'Англия и соседи',pr:worPr,vb:[0,0,450,525],
+  land:[GB,IRL,CON],zones:[],
+  rivers:[{n:'Путь Вильгельма (1688)',c:'#E56458',d:'Славная революция',t:'Осенью 1688 г. правитель Нидерландов Вильгельм III Оранский высадился в Англии. Яков II бежал почти без сопротивления, революцию назвали Славной. Маршрут на карте схематичный.',ps:[[4.3,52.0],[3.0,51.6],[1.5,51.0],[-0.5,50.6],[-2.5,50.5]],lx:-2.3,ly:49.6}],
+  labs:[['АНГЛИЯ',-1.6,52.6],['ФРАНЦИЯ',2.0,47.3],['НИДЕРЛАНДЫ',6.6,51.3]],
+  intro:'<h2>Англия, Нидерланды и Франция</h2><div class="d">1628 · 1688–1689</div><p>Две связи Англии с соседями: экспедиция Бекингема к Ла-Рошели (1628) и приход Вильгельма Оранского из Нидерландов (1688). В 1689 г. принят Билль о правах: король не может принимать законы без парламента.</p><p style="color:var(--tx2)">Нажми на точку или красный путь.</p>',
+  pts:[
+  {n:'Лондон',lo:-0.12,la:51.5,d:'Столица',t:'Здесь заседал парламент. Республика 1649 г., Реставрация 1660 г., Славная революция 1688 г. и Билль о правах 1689 г.'},
+  {n:'Амстердам',lo:4.9,la:52.37,d:'Нидерланды',t:'Правитель Нидерландов Вильгельм III Оранский был приглашён парламентом и в 1688 г. прибыл в Англию.'},
+  {n:'Ла-Рошель',lo:-1.15,la:46.16,d:'Франция',t:'Сюда Бекингем готовил экспедицию. Он был фаворитом Карла I и в 1628 г. был убит офицером-пуританином.'}]}
+};
+
+var cur='loc',quiz=false,sc=0,tot=0,tgt=null;
+var tabs=document.getElementById('tabs'),lg=document.getElementById('lg'),pn=document.getElementById('panel');
+function P(pr,pts){return pts.map(function(p){var q=pr(p[0],p[1]);return q[0].toFixed(1)+','+q[1].toFixed(1)}).join(' ')}
+function mkTabs(){tabs.innerHTML='';Object.keys(L).forEach(function(k){var b=document.createElement('button');b.className='tab'+(!quiz&&cur===k?' on':'');b.textContent=L[k].n;b.onclick=function(){quiz=false;cur=k;draw()};tabs.appendChild(b)});var q=document.createElement('button');q.className='tab'+(quiz?' on':'');q.textContent='🎯 Игра: найди на карте';q.onclick=function(){quiz=true;sc=0;tot=0;draw()};tabs.appendChild(q)}
+function show(p){pn.innerHTML='<h2></h2><div class="d"></div><p></p>';pn.children[0].textContent=p.n;pn.children[1].textContent=p.d;pn.children[2].textContent=p.t}
+function draw(){
+ mkTabs();G.remove();G=el('g',{});
+ var v=L[cur],pr=v.pr,vb=v.vb,vw=vb[2];svg.setAttribute('viewBox',vb.join(' '));
+ var fs=Math.max(vw*0.022,11),r=Math.max(vw*0.011,4.5);lg.innerHTML='';
+ var lands=v.land===true?Object.keys(LAND).map(function(k){return LAND[k]}):v.land;
+ lands.forEach(function(p){el('polygon',{class:'land',points:P(pr,p)},G)});
+ (v.seas||[]).forEach(function(p){el('polygon',{class:'sea2',points:P(pr,p)},G)});
+ v.zones.forEach(function(z){z.ps.forEach(function(p){el('polygon',{class:'zl',points:P(pr,p),fill:z.c,stroke:z.c},G)});var s=document.createElement('span');s.innerHTML='<i style="background:'+z.c+'"></i>'+z.n;lg.appendChild(s)});
+ v.rivers.forEach(function(rv){var pts=P(pr,rv.ps);el('polyline',{class:'route',points:pts,stroke:rv.c,'stroke-width':vw*0.007},G);
+  var q=pr(rv.lx,rv.ly);var t=el('text',{class:'lbl',x:q[0],y:q[1],style:'font-size:'+fs*0.95+'px;font-style:italic'},G);t.textContent=rv.n;
+  if(!quiz){var h=el('polyline',{class:'route hit',points:pts},G);h.onclick=function(){show(rv)}}});
+ v.labs.forEach(function(l){var q=pr(l[1],l[2]);var t=el('text',{class:'cl',x:q[0],y:q[1],'text-anchor':'middle',style:'font-size:'+fs*0.85+'px'},G);t.textContent=l[0]});
+ if(quiz){ask();return}
+ v.pts.forEach(function(p){var q=pr(p.lo,p.la);el('circle',{class:'city',cx:q[0],cy:q[1],r:r},G);
+  var right=q[0]>vb[0]+vw*0.82||p.side==='l';
+  var t=el('text',{class:'lbl',x:q[0]+(right?-r*1.8:r*1.8),y:q[1]+fs*0.35,'text-anchor':right?'end':'start',style:'font-size:'+fs+'px'},G);t.textContent=p.n;
+  var h=el('circle',{cx:q[0],cy:q[1],r:r*2.6,fill:'transparent',style:'cursor:pointer'},G);h.onclick=function(){show(p)}});
+ pn.innerHTML=v.intro;
+}
+function ask(){
+ var a=L[cur].pts;tgt=a[Math.floor(Math.random()*a.length)];
+ pn.innerHTML='<div class="q"></div><div class="fb" id="fb"></div><div class="hint">Счёт: '+sc+' из '+tot+'. Нажми на карте в нужное место (вкладка выбрана сверху: '+L[cur].n+').</div>';
+ pn.children[0].textContent='Где находится: '+tgt.n+'?  ('+tgt.d+')';
+}
+svg.addEventListener('click',function(e){
+ if(!quiz||!tgt)return;
+ var pt=svg.createSVGPoint();pt.x=e.clientX;pt.y=e.clientY;var m=pt.matrixTransform(svg.getScreenCTM().inverse());
+ var v=L[cur],q=v.pr(tgt.lo,tgt.la),dx=m.x-q[0],dy=m.y-q[1],d=Math.sqrt(dx*dx+dy*dy);tot++;
+ var ok=d<v.vb[2]*0.045;if(ok)sc++;
+ el('circle',{class:ok?'tgt':'miss',cx:m.x,cy:m.y,r:v.vb[2]*0.012},G);
+ if(!ok)el('circle',{class:'tgt',cx:q[0],cy:q[1],r:v.vb[2]*0.02},G);
+ var fb=document.getElementById('fb');fb.className='fb '+(ok?'ok':'bad');fb.textContent=ok?'Верно!':'Не совсем — правильное место обведено зелёным.';
+ var old=tgt;tgt=null;
+ var b=document.createElement('button');b.className='btn';b.textContent='Дальше';b.onclick=function(){draw()};pn.appendChild(b);
+ pn.querySelector('.hint').textContent='Счёт: '+sc+' из '+tot+'. '+old.t;
+});
+draw();
+})();
+</script></div></body></html>
