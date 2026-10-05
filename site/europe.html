@@ -1,0 +1,110 @@
+<!doctype html><html lang="ru"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Карта: Европа XVI–XVII вв.</title><link rel="stylesheet" href="style.css">
+<style>
+body{margin:0}.wrap{max-width:1000px;margin:0 auto;padding:16px 16px 64px}
+.nav{display:flex;gap:16px;flex-wrap:wrap}.nav a{min-height:44px;display:inline-flex;align-items:center;font-weight:600;text-decoration:none}
+h1{font-size:26px;margin:4px 0 8px}
+.row{display:flex;gap:8px;flex-wrap:wrap;margin:8px 0}
+.tab{font:inherit;border:1px solid var(--bd);background:var(--sf);color:var(--tx);border-radius:999px;padding:0 14px;min-height:44px;cursor:pointer}.tab.on{background:var(--bl);color:#fff;border-color:var(--bl)}
+#mapbox{border:1px solid var(--bd);border-radius:12px;overflow:hidden;background:#cfe6f5}svg{display:block;width:100%;height:auto}
+.land{fill:#EFE7D6;stroke:#B9A98A;stroke-width:.6}.sea{fill:#cfe6f5;stroke:#B9A98A;stroke-width:.4}
+.z{stroke:rgba(0,0,0,.35);stroke-width:.5;opacity:.8}
+.pin{fill:#fff;stroke:#2C2C2B;stroke-width:1.4;cursor:pointer}.pin.hot{fill:#E56458}.pin.sel{stroke:var(--bl);stroke-width:3}
+.lbl{font:600 7.5px -apple-system,Arial,sans-serif;fill:#2C2C2B;paint-order:stroke;stroke:#fff;stroke-width:2.2px;pointer-events:none}
+.route{fill:none;stroke:#D5803B;stroke-width:2.4;stroke-dasharray:5 3;stroke-linecap:round}
+.leg{display:flex;gap:6px 14px;flex-wrap:wrap;margin:10px 0;font-size:14px}.leg span{display:inline-flex;align-items:center;gap:6px}.leg i{width:14px;height:14px;border-radius:3px;background:var(--c);border:1px solid rgba(0,0,0,.3)}
+.panel{border:1px solid var(--bd);border-radius:12px;padding:16px;margin-top:12px;background:var(--sf)}.panel h2{margin:0 0 4px;font-size:20px}.panel .d{color:var(--tx2);font-size:14px;margin-bottom:6px}.panel p{margin:6px 0}
+.btn{font:inherit;cursor:pointer;border:0;border-radius:8px;background:var(--bl);color:#fff;min-height:44px;padding:0 18px;font-weight:600;margin:4px 6px 0 0}
+.opt{display:block;width:100%;text-align:left;font:inherit;margin:6px 0;border:1px solid var(--bd);background:var(--bg);color:var(--tx);border-radius:10px;min-height:48px;padding:8px 12px;cursor:pointer}.opt.ok{background:var(--grS);border-color:var(--gr)}.opt.bad{background:var(--rdS);border-color:var(--rd)}
+.q{font-size:18px;font-weight:600}
+@media(prefers-color-scheme:dark){#mapbox{background:#1d3a52}.land{fill:#3a3a35;stroke:#6b6a60}.sea{fill:#1d3a52}.lbl{fill:#fff;stroke:#191919}.pin{fill:#191919;stroke:#fff}}
+</style></head><body><div class="wrap">
+<div class="nav"><a href="index.html">← К оглавлению</a><a href="map.html">🧭 Открытия</a><a href="lenta.html">🗓️ Лента времени</a></div>
+<h1>🏰 Европа XVI–XVII вв.</h1>
+<div class="row" id="tabs"></div>
+<div class="leg" id="leg"></div>
+<div id="mapbox"><svg id="svg" viewBox="0 0 540 448" role="img" aria-label="Схематическая карта Европы"></svg></div>
+<div class="panel" id="panel"></div>
+<p style="color:var(--tx2);font-size:13px">Схематичная карта: границы и контуры приблизительны. В Чехии, Венгрии и Польше жило много протестантов, на карте показана преобладающая вера. Точные границы смотрите в атласе учебника.</p>
+</div>
+<script>
+(function(){
+var X=function(lo){return (lo+12)*9},Y=function(la){return (66-la)*14};
+function P(a){return a.map(function(p){return X(p[0]).toFixed(1)+','+Y(p[1]).toFixed(1)}).join(' ')}
+var NS='http://www.w3.org/2000/svg',svg=document.getElementById('svg');
+function el(n,a,p){var e=document.createElementNS(NS,n);for(var k in a)e.setAttribute(k,a[k]);(p||svg).appendChild(e);return e}
+var MAIN=[[-5.5,36],[-9,37],[-9.5,39],[-9,43],[-2,43.5],[-1.5,46],[-4.5,48.5],[-1.5,48.7],[1.5,50.5],[4,51.5],[5,53.3],[8.5,53.7],[8.5,55.5],[8,57],[10.5,57.5],[10.5,56],[12,54.5],[14,54],[18,54.7],[21,55.2],[21,57],[24,57.2],[24,59],[28,59.5],[30,60],[36,66],[54,66],[54,34],[36,34],[36,36.5],[30,36.3],[27,37],[26.3,39.5],[26,40.5],[23,40.2],[24,38],[22.5,36.5],[21.5,38],[19.5,40],[19.5,42],[16,43.5],[13.7,45.3],[12.3,45],[12.5,44],[16,41.8],[18.5,40.2],[16.5,38.5],[15.7,38],[16,39.5],[15,40.5],[12,42],[10.5,43.5],[8.5,44.3],[6,43.1],[3,43.3],[3.2,42],[0,39.5],[-1,37.5]];
+var SCAND=[[5.5,58.5],[5,62],[10,64],[15,68],[20,70],[28,71],[31,70],[30,66],[30,62],[29,60.5],[23,60],[21,61],[21.5,63],[25,65],[22,65.8],[17.5,62.5],[18.5,60],[16.5,57],[14,55.5],[12.5,56.2],[11.5,58.5],[10,59],[8,58]];
+var BRIT=[[-5.5,50],[1.5,51.2],[1.7,52.8],[-0.2,54.2],[-2,55.8],[-2,57.7],[-4,58.6],[-6,57.5],[-5.2,55.8],[-3,54.8],[-3.2,53.4],[-4.6,52.6],[-5.2,51.7]];
+var IRE=[[-10,52],[-6,52],[-5.8,55],[-8,55.2],[-10,54]];
+var SIC=[[12.5,38],[15.6,38.2],[15,36.7],[12.5,37.5]];var SAR=[[8.2,41],[9.7,41],[9.5,39],[8.4,39.2]];var COR=[[8.6,42.6],[9.5,43],[9.4,41.4],[8.7,41.6]];
+var SEAS=[[[28,41.5],[41.5,41.2],[41.5,43.5],[37,45],[33,46],[31,46.5],[30,45],[28.5,43.5]],[[10,54.5],[14,54],[21,55.2],[21,57],[24,57.2],[24,59],[28,59.5],[23,60],[18.5,60],[17.5,62.5],[21,61.5],[21,58],[16.5,57],[14,55.5],[12.5,56.2],[11,56]],[[23.5,40],[26,40.2],[26.3,39.5],[27,37.3],[26,36.5],[23,36.5],[24.2,38]]];
+var LANDS=[MAIN,SCAND,BRIT,IRE,SIC,SAR,COR];
+var defs=el('defs',{});var cp=el('clipPath',{id:'cl'},defs);LANDS.forEach(function(l){el('polygon',{points:P(l)},cp)});
+LANDS.forEach(function(l){el('polygon',{class:'land',points:P(l)})});
+SEAS.forEach(function(s){el('polygon',{class:'sea',points:P(s)})});
+var gz=el('g',{'clip-path':'url(#cl)'});var gl=el('g',{}),gp=el('g',{});
+var IB=[[-9.5,35.9],[-9.5,43.8],[-1.8,43.5],[3.3,42.4],[3,41],[0,38],[-5.5,35.9]];
+var FR=[[-5,48.6],[-1.8,43.5],[3.3,42.4],[7,43.7],[7,47.5],[4,51],[2,51.2]];
+var IT=[[7,43.7],[7,46],[12,47],[14,47],[14,46],[18,42],[18,38],[12,37.5],[8,43]];
+var AU=[[10,47.5],[10,49],[13,50.2],[15,51],[18,50],[18,48],[17,47],[14,46.5],[12,47]];
+var PL=[[15,51],[18.5,54.5],[24,56],[26,54],[27,52],[24,50],[22,49.2],[18,50]];
+var GERN=[[6,53.6],[8.5,55.5],[10.5,57.5],[14,55],[21,55.2],[18,52],[15,51],[13,50.2],[10,50],[9,51.5],[8,52]];
+var LIV=[[21,57],[24,57.2],[24,59],[28,59.5],[23,60],[21,58]];
+var NL=[[3.5,51.5],[7,53.4],[7,52],[5.8,51]];var SW=[[6,46.2],[10,46.5],[10,47.6],[7.5,47.6]];var SCO=[[-6,55],[-1.5,55.5],[-2,57.5],[-5,58.5]];var PAL=[[7.5,49],[9,49.5],[8.8,50],[7.5,50]];
+var ENG=[[-5.5,50],[1.5,51.2],[0.5,53.5],[-2.5,55],[-3.5,53.5],[-5,52]];
+var RUS=[[28,60],[54,66],[54,50],[37,48],[30,52],[27,54.5],[26,57.5]];
+var BAL=[[16,46],[20,48],[25,47.5],[29,45],[28.5,41.5],[26.5,41],[26,40.5],[23,40.2],[22.5,36.6],[21.5,38],[19.5,40],[19.5,42.4],[16,43.7],[15.5,45]];
+var ANA=[[26.3,39.5],[41,41.2],[54,41],[54,34],[36,34],[36.5,36.5],[30,36.3],[27,37.3]];
+var R={c:['#E8B84B','Католики'],l:['#5E9FE8','Лютеране'],k:['#46A171','Кальвинисты'],a:['#9B6BD1','Англикане'],o:['#D5803B','Православные'],m:['#7D7A75','Мусульмане (Османская империя)']};
+var LAYERS={
+ rel:{n:'Религии ≈1600',leg:[['#E8B84B','Католики'],['#5E9FE8','Лютеране'],['#46A171','Кальвинисты'],['#9B6BD1','Англикане'],['#D5803B','Православные'],['#7D7A75','Мусульмане']],
+  zones:[[IB,'c'],[FR,'c'],[IT,'c'],[AU,'c'],[PL,'c'],[IRE,'c'],[GERN,'l'],[SCAND,'l'],[LIV,'l'],[NL,'k'],[SW,'k'],[SCO,'k'],[PAL,'k'],[ENG,'a'],[RUS,'o'],[BAL,'m'],[ANA,'m']]},
+ hab:{n:'Габсбурги',leg:[['#C2185B','Испанские Габсбурги'],['#2783DE','Австрийские Габсбурги']],
+  zones:[]},
+ war:{n:'Тридцатилетняя война',leg:[['#E56458','Сражения и события'],['#E8B84B','Католические земли'],['#5E9FE8','Лютеране'],['#46A171','Кальвинисты']],
+  zones:[[AU,'c'],[IB,'c'],[GERN,'l'],[SCAND,'l'],[NL,'k'],[FR,'c']]},
+ arm:{n:'Армада 1588',leg:[['#D5803B','Путь «Непобедимой армады»']],zones:[]}
+};
+LAYERS.hab.zones=[[IB,'#C2185B'],[[[2.5,50.5],[3.5,51.4],[6,51.2],[6,49.5],[4.5,49.5]],'#C2185B'],[[[8.5,45],[10.5,45.5],[10,46],[8.5,46]],'#C2185B'],[SIC,'#C2185B'],[[[12,38],[18,41],[16,42],[13,41.5]],'#C2185B'],[AU,'#2783DE'],[[[17,47],[22,48.5],[22,47],[18,45.7]],'#2783DE']];
+var EV={
+ rel:[['Виттенберг',12.65,51.87,'1517','Лютер выступает против индульгенций','Здесь началась Реформация. Лютеранство быстро охватило север Германии и Скандинавию.'],
+  ['Женева',6.15,46.2,'1530-е','Центр кальвинизма','Кальвин создал здесь «церковную республику». Кальвинизм — вера Швейцарии, Нидерландов, Шотландии, гугенотов.'],
+  ['Лондон',-0.1,51.5,'1534','Англиканская церковь','Генрих VIII порвал с Римом, король стал главой церкви.'],
+  ['Рим',12.5,41.9,'—','Центр католичества','Папа начинает Контрреформацию: орден иезуитов, Тридентский собор.'],
+  ['Москва',37.6,55.75,'—','Православная Русь','Не затронута Реформацией.'],
+  ['Стамбул',29,41,'—','Столица Османской империи','Мусульманская держава, захватившая Балканы и часть Венгрии.']],
+ hab:[['Мадрид',-3.7,40.4,'1556–1598','Филипп II','Испанская ветвь: Испания, Нидерланды, часть Италии, колонии.'],['Вена',16.4,48.2,'—','Австрийские Габсбурги','Австрия, Чехия, часть Венгрии; императоры Священной Римской империи.'],['Брюссель',4.35,50.85,'1566','Начало восстания Нидерландов','Северные провинции отложились и создали республику.']],
+ war:[['Прага',14.4,50.1,'1618','Дефенестрация — начало войны','Протестанты выбросили из окна императорских наместников. Началась Тридцатилетняя война.'],
+  ['Белая гора',14.35,50.08,'1620','Поражение чешских протестантов','Католики победили; Чехия подчинена Габсбургам.'],
+  ['Брейтенфельд',12.4,51.4,'1631','Победа шведов','Густав II Адольф разбил имперских солдат.'],
+  ['Лютцен',12.1,51.25,'1632','Гибель Густава Адольфа','Шведы победили, но король погиб.'],
+  ['Рокруа',4.5,49.9,'1643','Победа Франции над Испанией','Франция вступила в войну на стороне протестантов, хотя была католической: политика важнее веры.'],
+  ['Мюнстер',7.6,52,'1648','Вестфальский мир','Конец войны, признаны кальвинисты, Швейцария и Нидерланды независимы, Германия раздроблена.']],
+ arm:[['Плимут',-4.1,50.4,'1588','Английский флот','Лёгкие быстрые корабли, меткая артиллерия.'],['Кале',1.85,50.95,'1588','Брандеры у Кале','Англичане пустили горящие корабли, испанцы вышли из строя.'],['Лиссабон',-9,38.7,'1588','Выход армады','130 кораблей идут в Нидерланды, чтобы высадить войско против Англии.']]
+};
+var ARM=[[-9,38.7],[-9,43.5],[-6,47],[-4,49.4],[-1,50.3],[1.9,50.9],[3,52.5],[1,56],[-3,59.5],[-8,58.5],[-11,55],[-11,51.5],[-10,46],[-9,43],[-9,40]];
+var CITIES=[['Лондон',-0.1,51.5,'a'],['Париж',2.35,48.85,'c'],['Мадрид',-3.7,40.4,'c'],['Рим',12.5,41.9,'c'],['Вена',16.4,48.2,'c'],['Краков',19.9,50.1,'c'],['Виттенберг',12.65,51.87,'l'],['Стокгольм',18,59.3,'l'],['Копенгаген',12.6,55.7,'l'],['Женева',6.15,46.2,'k'],['Амстердам',4.9,52.4,'k'],['Эдинбург',-3.2,55.95,'k'],['Москва',37.6,55.75,'o'],['Стамбул',29,41,'m']];
+var cur='rel',mode='learn';var tabs=document.getElementById('tabs'),leg=document.getElementById('leg'),panel=document.getElementById('panel');
+function smooth(pts){var d='M';return pts.map(function(p,i){return (i?'L':'M')+X(p[0]).toFixed(1)+','+Y(p[1]).toFixed(1)}).join('')}
+function draw(){ gz.innerHTML='';gl.innerHTML='';gp.innerHTML='';svg.appendChild(gz);svg.appendChild(gl);svg.appendChild(gp);
+ var L=LAYERS[cur];
+ L.zones.forEach(function(z){var c=z[1];var col=R[c]?R[c][0]:c;el('polygon',{class:'z',points:P(z[0]),fill:col},gz)});
+ SEAS.forEach(function(q){el('polygon',{class:'sea',points:P(q)},gz)});
+ leg.innerHTML=L.leg.map(function(x){return '<span style="--c:'+x[0]+'"><i></i>'+x[1]+'</span>'}).join('');
+ if(cur==='arm'){el('path',{class:'route',d:smooth(ARM)},gl)}
+ (EV[cur]||[]).forEach(function(e){var x=X(e[1]),y=Y(e[2]);var c=el('circle',{class:'pin'+(cur==='war'||cur==='arm'?' hot':''),cx:x,cy:y,r:6},gp);var t=el('text',{class:'lbl',x:x+8,y:y+3},gl);t.textContent=e[0];c.addEventListener('click',function(){info(e,c)})});
+ panel.innerHTML='<p>Нажмите на булавку на карте — появится описание. Слой «Игра» проверяет, какая вера преобладала в городе.</p>'}
+function info(e,c){document.querySelectorAll('.pin').forEach(function(p){p.classList.remove('sel')});c.classList.add('sel');panel.innerHTML='<h2>'+e[0]+' <span style="color:var(--tx2);font-weight:400">· '+e[3]+'</span></h2><div class="d">'+e[4]+'</div><p>'+e[5]+'</p>'}
+Object.keys(LAYERS).concat(['quiz']).forEach(function(k){var b=document.createElement('button');b.className='tab'+(k===cur?' on':'');b.textContent=k==='quiz'?'🎯 Игра: какая вера?':LAYERS[k].n;b.onclick=function(){document.querySelectorAll('.tab').forEach(function(x){x.classList.toggle('on',x===b)});if(k==='quiz'){mode='quiz';startQuiz()}else{mode='learn';cur=k;draw()}};tabs.appendChild(b)});
+var sc=0,tot=0;
+function startQuiz(){cur='rel';draw();gz.innerHTML='';gl.innerHTML='';gp.innerHTML='';leg.innerHTML='';sc=0;tot=0;nq()}
+function nq(){gp.innerHTML='';gl.innerHTML='';var c=CITIES[Math.floor(Math.random()*CITIES.length)];var x=X(c[1]),y=Y(c[2]);el('circle',{class:'pin hot',cx:x,cy:y,r:7},gp);
+ panel.innerHTML='<div class="q">Какая вера преобладала в городе '+c[0]+' около 1600 года?</div><div id="o"></div><div id="fb" aria-live="polite" style="margin-top:8px"></div><div style="color:var(--tx2)">Верно: '+sc+' из '+tot+'</div>';
+ var o=document.getElementById('o'),done=false;var keys=Object.keys(R);
+ keys.forEach(function(k){var b=document.createElement('button');b.className='opt';b.textContent=R[k][1];b.onclick=function(){if(done)return;done=true;tot++;var good=k===c[3];if(good)sc++;b.classList.add(good?'ok':'bad');[].forEach.call(o.children,function(z){if(z.textContent===R[c[3]][1])z.classList.add('ok')});
+  var L=LAYERS.rel;L.zones.forEach(function(z){el('polygon',{class:'z',points:P(z[0]),fill:R[z[1]][0]},gz)});SEAS.forEach(function(q){el('polygon',{class:'sea',points:P(q)},gz)});leg.innerHTML=L.leg.map(function(q){return '<span style="--c:'+q[0]+'"><i></i>'+q[1]+'</span>'}).join('');
+  document.getElementById('fb').innerHTML=(good?'✅ Верно! ':'❌ Нет. ')+'<br><button class="btn" id="nx">Дальше</button>';document.getElementById('nx').onclick=function(){gz.innerHTML='';leg.innerHTML='';nq()}};o.appendChild(b)})}
+draw();
+})();
+</script></body></html>
