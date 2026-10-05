@@ -1,0 +1,117 @@
+<!doctype html><html lang="ru"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Карта: Великие географические открытия</title><link rel="stylesheet" href="style.css">
+<style>
+body{margin:0}.wrap{max-width:1000px;margin:0 auto;padding:16px 16px 64px}
+.nav{display:flex;align-items:center;gap:12px;margin-bottom:8px}.nav a{min-height:44px;display:inline-flex;align-items:center;font-weight:600;text-decoration:none}
+h1{font-size:26px;margin:4px 0 8px}
+.tabs,.chips,.regs{display:flex;gap:8px;flex-wrap:wrap;margin:8px 0}
+.tab,.chip,.reg{font:inherit;border:1px solid var(--bd);background:var(--sf);color:var(--tx);border-radius:999px;padding:0 14px;min-height:44px;cursor:pointer}
+.tab.on{background:var(--bl);color:#fff;border-color:var(--bl)}
+.chip{display:inline-flex;align-items:center;gap:8px}.chip i{width:14px;height:4px;border-radius:2px;background:var(--c)}.chip.sel{border-color:var(--c);box-shadow:0 0 0 2px var(--c) inset}
+.reg{min-height:36px;font-size:14px}
+#mapbox{border:1px solid var(--bd);border-radius:12px;overflow:hidden;background:#cfe6f5}
+svg{display:block;width:100%;height:auto;touch-action:manipulation}
+.land{fill:#EADFC8;stroke:#B9A98A;stroke-width:.6}.sea2{fill:#cfe6f5;stroke:#B9A98A;stroke-width:.4}
+.grid{stroke:rgba(0,0,0,.08);stroke-width:.4}
+.route{fill:none;stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round;cursor:pointer}.route.hit{stroke:transparent;stroke-width:14}
+.route.dim{opacity:.18}.route.act{stroke-width:3.4}
+.city{fill:#fff;stroke:#2C2C2B;stroke-width:1.2}.lbl{font:600 8px -apple-system,Arial,sans-serif;fill:#2C2C2B;paint-order:stroke;stroke:#fff;stroke-width:2.4px;pointer-events:none}
+.cl{font:700 9px Arial;fill:rgba(0,0,0,.28);letter-spacing:2px;pointer-events:none}
+.panel{border:1px solid var(--bd);border-radius:12px;padding:16px;margin-top:12px;background:var(--sf)}.panel h2{margin:0 0 4px;font-size:20px}.panel .d{color:var(--tx2);font-size:14px;margin-bottom:8px}.panel p{margin:6px 0}
+.btn{font:inherit;cursor:pointer;border:0;border-radius:8px;background:var(--bl);color:#fff;min-height:44px;padding:0 18px;font-weight:600}
+.q{font-size:18px;font-weight:600}.fb{min-height:24px;font-weight:600}.ok{color:var(--gr)}.bad{color:var(--rd)}
+.tgt{fill:none;stroke:var(--gr);stroke-width:2}.miss{fill:none;stroke:var(--rd);stroke-width:2}
+@media(prefers-color-scheme:dark){#mapbox{background:#1d3a52}.land{fill:#3a3a35;stroke:#6b6a60}.sea2{fill:#1d3a52;stroke:#6b6a60}.lbl{fill:#fff;stroke:#191919}.city{fill:#191919;stroke:#fff}.cl{fill:rgba(255,255,255,.25)}.grid{stroke:rgba(255,255,255,.08)}}
+</style></head><body><div class="wrap">
+<div class="nav"><a href="index.html">← К оглавлению</a><a href="lenta.html">🗓️ Лента времени</a></div>
+<h1>🧭 Великие географические открытия</h1>
+<div class="tabs"><button class="tab on" data-m="explore">Изучаем маршруты</button><button class="tab" data-m="quiz">Игра: найди на карте</button></div>
+<div class="chips" id="chips"></div>
+<div class="regs" id="regs"></div>
+<div id="mapbox"><svg id="svg" viewBox="0 30 1080 420" role="img" aria-label="Схематическая карта мира с маршрутами путешественников"></svg></div>
+<div class="panel" id="panel"></div>
+<p style="color:var(--tx2);font-size:13px">Схематичная карта: контуры упрощены, маршруты приблизительны. Для точных карт смотрите атлас учебника.</p>
+</div>
+<script>
+(function(){
+var X=function(lo){return (lo+180)*3},Y=function(la){return (90-la)*3};
+function P(pts){return pts.map(function(p){return X(p[0]).toFixed(1)+','+Y(p[1]).toFixed(1)}).join(' ')}
+var LAND={
+ na:[[-168,66],[-162,70],[-140,70],[-125,70],[-95,72],[-82,68],[-78,62],[-65,60],[-56,52],[-66,45],[-70,42],[-76,35],[-81,30],[-80,25],[-84,30],[-90,29],[-97,26],[-97,20],[-90,21],[-87,21],[-88,16],[-83,15],[-83,10],[-78,8],[-85,10],[-92,15],[-105,20],[-110,23],[-115,30],[-118,34],[-124,40],[-124,48],[-130,55],[-140,60],[-150,61],[-158,57],[-165,60]],
+ sa:[[-78,8],[-72,12],[-62,10],[-52,5],[-50,0],[-44,-2],[-35,-6],[-39,-14],[-41,-22],[-48,-26],[-53,-34],[-58,-38],[-65,-41],[-66,-47],[-69,-52],[-68,-55],[-73,-52],[-74,-45],[-72,-35],[-71,-20],[-76,-14],[-81,-5],[-80,0],[-77,4]],
+ gl:[[-55,60],[-45,60],[-20,70],[-20,80],[-60,82],[-70,76],[-55,66]],
+ eu:[[-9,37],[-9,43],[-2,43.5],[-4,48],[2,51],[8,54],[8,58],[5,59],[6,62],[15,68],[25,71],[40,67],[44,68],[60,69],[70,73],[100,77],[113,74],[140,72],[160,70],[180,68],[180,65],[165,60],[156,51],[143,59],[135,55],[140,48],[130,42],[127,38],[129,35],[126,35],[125,40],[122,40],[119,38],[122,31],[120,25],[110,20],[108,21],[106,10],[100,13],[99,8],[103,1.5],[98,8],[97,17],[94,18],[92,22],[88,21],[80,15],[78,8],[73,16],[72,21],[67,24],[57,25],[56,27],[50,30],[48,29],[50,26],[56,24],[59,22],[52,16],[44,12],[43,15],[39,21],[35,28],[33,30],[35,32],[36,36],[30,36],[27,37],[26,40],[23,40],[24,38],[22,36.5],[20,40],[19,42],[14,45],[12,45],[18,40],[16,38],[12,42],[9,44],[3,43],[0,39],[-2,37],[-6,36]],
+ af:[[-17,21],[-16,28],[-9,32],[-6,36],[10,37],[11,33],[20,31],[32,31],[34,28],[38,19],[43,12],[51,12],[48,5],[40,-3],[39,-10],[40,-15],[35,-24],[32,-29],[27,-34],[20,-35],[17,-30],[12,-17],[13,-8],[9,-1],[9,4],[5,6],[-2,5],[-8,4],[-13,8],[-17,14]],
+ mg:[[44,-25],[47,-25],[50,-15],[49,-12],[44,-17]],
+ au:[[114,-22],[122,-18],[130,-12],[137,-12],[142,-11],[146,-19],[153,-26],[150,-37],[141,-38],[135,-34],[124,-34],[115,-34]],
+ jp:[[130,31],[135,34],[140,36],[142,40],[141,45],[139,38],[133,35]],
+ uk:[[-5,50],[1,51],[2,53],[-2,57],[-5,58],[-6,55],[-3,54],[-5,52]],
+ ie:[[-10,52],[-6,52],[-6,55],[-10,54]],
+ is:[[-24,65],[-14,65],[-14,66.5],[-22,66.5]],
+ cu:[[-85,22],[-77,20],[-74,20],[-80,23]],
+ hi:[[-74,18],[-69,18.5],[-69,19.8],[-72,19.8]],
+ sm:[[95,5],[106,-6],[103,-5],[96,2]],
+ jv:[[105,-6],[114,-8],[106,-7]],
+ bo:[[109,1],[117,7],[119,1],[115,-4],[110,-3]],
+ ph:[[120,18],[122,17],[126,8],[122,7],[121,13]],
+ nz:[[172,-34],[178,-38],[175,-41],[167,-46],[171,-43]]
+};
+var SEAS={ bs:[[28,41],[41,41],[41,45],[34,46],[30,46]], balt:[[10,55],[14,54],[21,55],[24,58],[30,60],[23,60],[18,60],[17,57],[12,56]], cas:[[47,37],[54,37],[54,45],[47,45]], red:[[33,28],[35,28],[43,13],[40,15]] };
+var svg=document.getElementById('svg'),NS='http://www.w3.org/2000/svg';
+function el(n,a,p){var e=document.createElementNS(NS,n);for(var k in a)e.setAttribute(k,a[k]);(p||svg).appendChild(e);return e}
+for(var lo=-180;lo<=180;lo+=30){el('line',{class:'grid',x1:X(lo),x2:X(lo),y1:30,y2:450})}
+for(var la=-60;la<=80;la+=30){el('line',{class:'grid',x1:0,x2:1080,y1:Y(la),y2:Y(la)})}
+for(var k in LAND)el('polygon',{class:'land',points:P(LAND[k])});
+for(var k in SEAS)el('polygon',{class:'sea2',points:P(SEAS[k])});
+[['СЕВЕРНАЯ АМЕРИКА',-105,45],['ЮЖНАЯ АМЕРИКА',-60,-15],['ЕВРОПА',15,50],['АФРИКА',20,5],['АЗИЯ',90,50],['АВСТРАЛИЯ',134,-26]].forEach(function(c){var t=el('text',{class:'cl',x:X(c[1]),y:Y(c[2]),'text-anchor':'middle'});t.textContent=c[0]});
+var ROUTES=[
+ {id:'dias',n:'Бартоломеу Диаш',y:'1487–1488',c:'#8E5BD1',who:'Португалия',pts:[[-9,38.7],[-18,25],[-14,0],[-5,-20],[10,-30],[20,-36],[26.5,-34]],t:'Португалец Диаш первым обошёл южную окончность Африки (мыс Бурь, позже «Доброй Надежды»).',r:'Первый шаг на пути в Индию морем.'},
+ {id:'columbus',n:'Христофор Колумб',y:'1492',c:'#E56458',who:'Испания',pts:[[-6.9,37.2],[-15.5,28],[-35,26],[-55,25],[-74.5,24]],t:'Испанские корабли «Санта-Мария», «Пинта», «Нинья» идут на запад, чтобы достичь Индии. Выходят на Багамы.',r:'Европа открывает Америку. Колумб до конца жизни считал, что попал в Азию.'},
+ {id:'cabot',n:'Джон Кабот',y:'1497',c:'#46A171',who:'Англия',pts:[[-2.6,51.4],[-15,53],[-30,52],[-45,50],[-55.5,48]],t:'Итальянец на английской службе добирается до берегов Северной Америки (Ньюфаундленд).',r:'Основа будущих английских прав на Северную Америку.'},
+ {id:'gama',n:'Васко да Гама',y:'1497–1499',c:'#2783DE',who:'Португалия',pts:[[-9,38.7],[-20,15],[-25,-5],[-18,-25],[0,-36],[18.5,-35],[35,-24],[41,-5],[55,3],[75.8,11.2]],t:'Да Гама обошёл Африку с юга, нанял лоцмана в Малинди и пришёл в Каликут на западном берегу Индии.',r:'Морской путь в Индию открыт; португальская торговля пряностями.'},
+ {id:'magellan',n:'Фернан Магеллан',y:'1519–1522',c:'#D5803B',who:'Испания',pts:[[-6,37],[-25,10],[-35,-12],[-43,-23],[-60,-40],[-70,-53],[-100,-45],[-130,-30],[-160,-10],[-190,5],[-215,13],[-236,10],[-233,0],[-235,-9],[-270,-20],[-310,-35],[-340,-35],[-375,10],[-366,37]],t:'Пять кораблей выходят из Севильи, проходят пролив у южной окончности Америки, пересекают Тихий океан и доходят до Филиппин. Магеллан гибнет там; домой возвращается один корабль из пяти.',r:'Первое кругосветное плавание: доказано, что Земля — шар, а океаны соединены.'},
+ {id:'cortes',n:'Эрнан Кортес',y:'1519–1521',c:'#C2185B',who:'Испания',pts:[[-82,22],[-90,20],[-96,19],[-99,19.4]],t:'Конкистадор высаживается у Веракруса и идёт на Теночтитлан — столицу ацтеков.',r:'Ацтекская держава падает, начинается испанская Новая Испания (Мексика).'},
+ {id:'pizarro',n:'Франсиско Писарро',y:'1532–1535',c:'#00897B',who:'Испания',pts:[[-79.5,9],[-80,-3],[-79,-7],[-76,-12]],t:'Из Панамы отряд Писарро идёт в горы Перу, пленяет вождя инков в Кахамарке и захватывает Куско.',r:'Падение империи инков; серебро Потоси идёт в Европу.'},
+ {id:'dezhnev',n:'Семён Дежнёв',y:'1648',c:'#5D6D7E',who:'Россия',pts:[[160,69],[170,69.5],[180,67],[-170,66],[-169.5,65.6]],t:'Русские казаки обошли Чукотский полуостров и прошли пролив между Азией и Америкой.',r:'Открыт пролив, позже названный Беринговым.'}
+];
+var CITIES=[['Лиссабон',-9,38.7],['Севилья',-6,37.4],['Каликут',75.8,11.2],['Теночтитлан',-99,19.4],['Куско',-72,-13.5],['Константинополь',29,41],['Мыс Доброй Надежды',18.5,-34.3],['Багамы',-76,24.5],['Ньюфаундленд',-55.5,48.5],['Филиппины',124,10.5],['Малинди',40,-3],['Панама',-79.5,9],['Магелланов пролив',-70,-53.5],['Берингов пролив',-169.5,65.8],['Лондон',-0.1,51.5]];
+function smooth(seg){ if(seg.length<3)return 'M'+seg.map(function(p){return p[0].toFixed(1)+','+p[1].toFixed(1)}).join('L');
+ var d='M'+seg[0][0].toFixed(1)+','+seg[0][1].toFixed(1);
+ for(var i=0;i<seg.length-1;i++){var p0=seg[Math.max(i-1,0)],p1=seg[i],p2=seg[i+1],p3=seg[Math.min(i+2,seg.length-1)];
+  var c1=[p1[0]+(p2[0]-p0[0])/6,p1[1]+(p2[1]-p0[1])/6],c2=[p2[0]-(p3[0]-p1[0])/6,p2[1]-(p3[1]-p1[1])/6];
+  d+='C'+c1[0].toFixed(1)+','+c1[1].toFixed(1)+' '+c2[0].toFixed(1)+','+c2[1].toFixed(1)+' '+p2[0].toFixed(1)+','+p2[1].toFixed(1)}
+ return d}
+function pathFor(pts){ var norm=pts.map(function(p){var l=((p[0]+180)%360+360)%360-180;return [X(l),Y(p[1])]});
+ var segs=[[norm[0]]];
+ for(var i=1;i<norm.length;i++){ if(Math.abs(norm[i][0]-norm[i-1][0])>540){segs.push([norm[i]])}else segs[segs.length-1].push(norm[i])}
+ return segs.map(smooth).join(' ')}
+var gR=el('g',{}),gC=el('g',{}),gQ=el('g',{});
+var nodes={};
+ROUTES.forEach(function(r){ var d=pathFor(r.pts); var g=el('g',{},gR);
+ var p=el('path',{class:'route',d:d,stroke:r.c},g);
+ var h=el('path',{class:'route hit',d:d},g);
+ h.addEventListener('click',function(){select(r.id)});nodes[r.id]={p:p,g:g};});
+CITIES.forEach(function(c){ var x=X(c[1]),y=Y(c[2]); el('circle',{class:'city',cx:x,cy:y,r:3.2},gC); var t=el('text',{class:'lbl',x:x+5,y:y-4},gC);t.textContent=c[0]; });
+var mode='explore',answered=0,okc=0,cur=null;
+var chips=document.getElementById('chips'),panel=document.getElementById('panel');
+ROUTES.forEach(function(r){ var b=document.createElement('button');b.className='chip';b.style.setProperty('--c',r.c);b.innerHTML='<i></i>'+r.n;b.onclick=function(){select(r.id)};r.btn=b;chips.appendChild(b)});
+function select(id){ ROUTES.forEach(function(r){var on=r.id===id;nodes[r.id].p.classList.toggle('act',on);nodes[r.id].g.classList.toggle('dim',!on);r.btn.classList.toggle('sel',on)});
+ var r=ROUTES.filter(function(x){return x.id===id})[0];
+ var len=nodes[id].p.getTotalLength();var pp=nodes[id].p;pp.style.transition='none';pp.style.strokeDasharray=len;pp.style.strokeDashoffset=len;pp.getBoundingClientRect();
+ if(!matchMedia('(prefers-reduced-motion:reduce)').matches){pp.style.transition='stroke-dashoffset 2.2s ease';}pp.style.strokeDashoffset=0;
+ panel.innerHTML='<h2>'+r.n+' <span style="color:var(--tx2);font-weight:400">· '+r.y+'</span></h2><div class="d">Страна: '+r.who+'</div><p>'+r.t+'</p><p><b>Итог:</b> '+r.r+'</p><button class="btn" id="all">Показать все маршруты</button>';
+ document.getElementById('all').onclick=reset}
+function reset(){ROUTES.forEach(function(r){nodes[r.id].p.classList.remove('act');nodes[r.id].g.classList.remove('dim');nodes[r.id].p.style.strokeDasharray='';r.btn.classList.remove('sel')});panel.innerHTML='<p>Нажмите на маршрут на карте или на кнопку выше — появится описание, дата и итог. Область просмотра меняйте кнопками ниже.</p>'}
+var REG=[['Весь мир','0 30 1080 420'],['Атлантика','180 40 400 300'],['Америка','60 50 340 330'],['Африка и Индия','480 90 360 330'],['Азия и Тихий океан','680 60 400 360']];
+var regs=document.getElementById('regs');REG.forEach(function(r){var b=document.createElement('button');b.className='reg';b.textContent=r[0];b.onclick=function(){svg.setAttribute('viewBox',r[1])};regs.appendChild(b)});
+var PL=CITIES.filter(function(c){return c[0]!=='Малинди'});
+function nextQ(){ gQ.innerHTML=''; cur=PL[Math.floor(Math.random()*PL.length)]; cur.done=false; panel.innerHTML='<div class="q">Найдите на карте: '+cur[0]+'</div><div class="fb" id="fb" aria-live="polite"></div><div>Верно: '+okc+' из '+answered+'</div>';}
+svg.addEventListener('click',function(e){ if(mode!=='quiz'||!cur||cur.done)return; var pt=svg.createSVGPoint();pt.x=e.clientX;pt.y=e.clientY;var q=pt.matrixTransform(svg.getScreenCTM().inverse());
+ var tx=X(cur[1]),ty=Y(cur[2]);var dist=Math.hypot(q.x-tx,q.y-ty);var good=dist<28;answered++;if(good)okc++;cur.done=true;
+ el('circle',{class:good?'tgt':'miss',cx:tx,cy:ty,r:12},gQ);
+ var fb=document.getElementById('fb');fb.className='fb '+(good?'ok':'bad');fb.textContent=good?'Верно! 🎉':'Нет, вот где это (кружок)';
+ var b=document.createElement('button');b.className='btn';b.textContent='Дальше';b.style.marginTop='8px';b.onclick=nextQ;panel.appendChild(b)});
+document.querySelectorAll('.tab').forEach(function(t){t.onclick=function(){document.querySelectorAll('.tab').forEach(function(x){x.classList.toggle('on',x===t)});mode=t.dataset.m;gQ.innerHTML='';if(mode==='quiz'){chips.style.display='none';gR.style.opacity=.35;svg.setAttribute('viewBox','0 30 1080 420');answered=0;okc=0;nextQ()}else{chips.style.display='';gR.style.opacity=1;reset()}}});
+reset();
+})();
+</script></body></html>
