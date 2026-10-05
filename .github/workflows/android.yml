@@ -25,14 +25,23 @@ jobs:
           gradle-version: '8.7'
       - name: Build debug APK
         run: gradle -p android assembleDebug --no-daemon
+      - name: Prepare APK
+        run: cp android/app/build/outputs/apk/debug/app-debug.apk History7.apk
       - uses: actions/upload-artifact@v4
         with:
           name: History7-apk
-          path: android/app/build/outputs/apk/debug/app-debug.apk
+          path: History7.apk
+      - name: Publish GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: apk-${{ github.run_number }}
+          name: History7 APK #${{ github.run_number }}
+          files: History7.apk
+          fail_on_unmatched_files: true
       - name: Commit APK to repo
         run: |
           mkdir -p apk
-          cp android/app/build/outputs/apk/debug/app-debug.apk apk/History7.apk
+          cp History7.apk apk/History7.apk
           git config user.name "github-actions"
           git config user.email "actions@users.noreply.github.com"
           git add apk/History7.apk
