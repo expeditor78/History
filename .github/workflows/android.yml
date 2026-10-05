@@ -14,8 +14,6 @@ permissions:
 jobs:
   release:
     runs-on: ubuntu-latest
-    env:
-      KEYSTORE_FILE: ${{ runner.temp }}/history7-release.jks
     steps:
       - uses: actions/checkout@v4
 
@@ -42,8 +40,8 @@ jobs:
               exit 1
             fi
           done
-          echo "$ANDROID_KEYSTORE_B64" | base64 -d > "$KEYSTORE_FILE"
-          chmod 600 "$KEYSTORE_FILE"
+          echo "$ANDROID_KEYSTORE_B64" | base64 -d > "$RUNNER_TEMP/history7-release.jks"
+          chmod 600 "$RUNNER_TEMP/history7-release.jks"
 
       - name: Build release APK and AAB
         shell: bash
@@ -85,7 +83,7 @@ jobs:
       - name: Remove keystore
         if: always()
         shell: bash
-        run: rm -f "$KEYSTORE_FILE"
+        run: rm -f "$RUNNER_TEMP/history7-release.jks"
 
       - uses: actions/upload-artifact@v4
         with:
