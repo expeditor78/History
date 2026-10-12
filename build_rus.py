@@ -8,9 +8,9 @@ HERE = os.path.dirname(os.path.abspath(__file__))
 SRC = os.path.join(HERE, 'rus_src')
 OUT = os.path.join(HERE, 'site')
 sys.path.insert(0, SRC)
-import content1, content2, content3
+import les1, les2, les3, les4, content3, h
 
-TOPICS = content1.TOPICS + content2.TOPICS
+TOPICS = les1.TOPICS + les2.TOPICS + les3.TOPICS + les4.TOPICS
 LET = 'АБВГД'
 ABOUT = ('<footer class="about">💡 Идея и составление: <b>Алексей</b> · '
          '<a href="https://github.com/expeditor78" target="_blank" rel="noopener">GitHub: expeditor78</a></footer>')
@@ -106,16 +106,16 @@ def build():
     open(f'{out}/test.html', 'w', encoding='utf-8').write(page('Итоговый тест', body, 'test.html'))
 
     # шпаргалка и термины
-    gl = content1.T(*[[f'<b>{esc(a)}</b>', esc(b), c] for a, b, c in content3.GLOSSARY], head=['Термин', 'Значение', 'Пример'])
+    gl = h.T(*[[f'<b>{esc(a)}</b>', esc(b), c] for a, b, c in content3.GLOSSARY], head=['Термин', 'Значение', 'Пример'])
     body = (f'<div class="cheat"><h1><span class="big">📋</span>Шпаргалка и термины</h1>'
             f'<p class="lead">Краткая сводка правил. Страницу удобно распечатать.</p>{content3.CHEAT}<h2>Термины</h2>{gl}</div>')
     open(f'{out}/cheat.html', 'w', encoding='utf-8').write(page('Шпаргалка и термины', body, 'cheat.html'))
 
     # главная раздела
     cards = ''.join(f'<a class="card" data-t="{t["slug"]}" href="{t["slug"]}.html"><span class="ci">{t["icon"]}</span><span class="ct">{esc(t["title"])}</span><span class="badge">Не начато</span></a>' for t in TOPICS)
-    body = f'''<h1>Русский язык, 7 класс — коротко и по делу</h1>
-<p class="lead">Опорные конспекты по темам 7 класса: причастие, деепричастие, наречие, категория состояния, служебные части речи и междометие. В каждой теме — правило, примеры, типичные ошибки и тест.</p>
-<aside class="callout"><span class="ico">💡</span><div><p>Порядок работы: <b>прочитать правило → разобрать примеры → пройти тест темы → выполнить задания практикума</b>. Конспекты дополняют учебник, а не заменяют его.</p></div></aside>
+    body = f'''<h1>Русский язык, 7 класс — понятно и с примерами</h1>
+<p class="lead">Причастие, деепричастие, наречие, категория состояния, предлоги, союзы, частицы и междометия. Всё объяснено простыми словами: что это такое, зачем нужно, как не запутаться, плюс примеры, лайфхаки и разбор «по шагам».</p>
+<aside class="callout"><span class="ico">💡</span><div><p>Как заниматься: <b>читай тему по порядку → пробуй ответить сам на вопросы с «🤔» → разбери примеры → пройди тест темы → потренируйся в практикуме</b>. Если что-то непонятно, вернись на шаг назад: в каждой теме есть блок «Простыми словами».</p></div></aside>
 <div class="hero"><div><b id="hnum">0</b><span>тем усвоено из <span id="htot">{len(TOPICS)}</span></span></div><div class="bar big"><i id="hbar"></i></div></div>
 <div class="quick"><a class="btn" href="{TOPICS[0]["slug"]}.html">Начать →</a><a class="btn ghost" href="practice.html">Практикум</a><a class="btn ghost" href="test.html">Итоговый тест</a><a class="btn ghost" href="cheat.html">Шпаргалка</a><a class="btn ghost" href="../start.html">🏠 Выбор предмета</a></div>
 <h2 class="chtitle" style="--c:#2783DE">Темы</h2><div class="grid">{cards}</div>'''

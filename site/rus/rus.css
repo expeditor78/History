@@ -21,3 +21,17 @@ main h2{margin-top:40px}
 .lnk{display:flex;gap:12px;flex-wrap:wrap;margin:16px 0}
 .cheat h2{font-size:20px}
 @media print{.rq,.tbtns,.status{display:none}}
+/* блоки подробных объяснений */
+.say,.tip,.stepsbox,.demo,.recap{padding:14px 16px;border-radius:12px;margin:18px 0;border:1px solid var(--bd)}
+.say p,.tip p{margin:6px 0 0}
+.say{background:var(--sf);border-left:4px solid var(--bl)}
+.tip{background:var(--grS);border-left:4px solid var(--gr)}
+.demo{background:var(--sf2)}
+.demo ul{margin:8px 0 0;padding-left:20px}.demo li{margin:6px 0}
+.stepsbox ol{margin:8px 0 0;padding-left:22px}.stepsbox li{margin:6px 0}
+.recap{background:var(--blS);border-color:var(--bl)}
+.recap ul{margin:8px 0 0;padding-left:20px}.recap li{margin:5px 0}
+.ask{border:1px dashed var(--bd);border-radius:12px;padding:10px 14px;margin:14px 0}
+.ask summary{cursor:pointer;font-weight:600}
+.ask div{margin-top:8px}
+.rule b:first-child,.warn b:first-child{margin-right:2px}
