@@ -267,6 +267,9 @@ open(f'{OUT}/index.html', 'w').write(page('Оглавление', home, '', ''))
 open(f'{OUT}/.nojekyll', 'w').write('')
 for f in os.listdir('dist_src'):
     if f != 'video.js': shutil.copy('dist_src/' + f, OUT + '/' + f)
+# --- раздел «Русский язык» (rus_src/ -> site/rus/)
+import build_rus
+build_rus.build()
 # --- PWA: service worker с предзагрузкой всех файлов (офлайн-режим) ---
 import hashlib
 files = ['./']

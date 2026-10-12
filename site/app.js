@@ -32,6 +32,15 @@
  if(qk&&!qk.querySelector('a[href$="map.html"]')){
   MAPS.forEach(function(m){var a=document.createElement('a');a.className='btn ghost';a.href=BASE+m[1];a.textContent=m[0];qk.appendChild(a)});
  }
+ // раздел «Русский язык»
+ if(side&&!side.querySelector('a[href$="rus/index.html"]')){
+  var br=side.querySelector('.brand'),ra=document.createElement('a');ra.className='nl';ra.href=BASE+'rus/index.html';ra.textContent='📝 Русский язык, 7 класс';
+  side.insertBefore(ra,br?br.nextSibling:side.firstChild);
+ }
+ if(qk&&!qk.querySelector('a[href$="rus/index.html"]')){
+  var rb=document.createElement('a');rb.className='btn ghost';rb.href=BASE+'rus/index.html';rb.textContent='📝 Русский язык';
+  if(qk.firstChild)qk.firstChild.after(rb);else qk.appendChild(rb);
+ }
  // quiz
  var quiz=document.querySelector('.quiz');
  if(quiz){

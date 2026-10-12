@@ -1,0 +1,23 @@
+/* Раздел «Русский язык» — дополняет ../style.css */
+.rule,.warn{padding:12px 16px;border-radius:0 8px 8px 0;margin:16px 0}
+.rule{border-left:4px solid var(--bl);background:var(--blS)}
+.warn{border-left:4px solid var(--or);background:var(--orS)}
+.ex{padding-left:20px}.ex li{margin:6px 0}
+s{color:var(--rd);text-decoration-thickness:1.5px}
+main h2{margin-top:40px}
+.tag{display:inline-block;margin:0 0 8px;font-size:12px;font-weight:600;color:var(--tx2);background:var(--sf2);border-radius:999px;padding:2px 10px}
+.rq .q{margin:12px 0}
+.pz{border:1px solid var(--bd);border-radius:12px;padding:16px;margin:12px 0}
+.pz .expl{margin-top:12px}
+.pz ul{margin:8px 0 0;padding-left:20px}
+.tree{border:1px solid var(--bd);border-radius:12px;padding:16px;background:var(--sf)}
+.tree .tq{font-weight:600;margin:0 0 6px}.tree .th{color:var(--tx2);font-size:15px;margin:0 0 12px}
+.tbtns{display:flex;gap:8px;flex-wrap:wrap}
+.tbtns button{font:inherit;cursor:pointer;min-height:44px;padding:0 20px;border-radius:8px;border:1px solid var(--bd);background:var(--bg);color:var(--tx)}
+.tbtns button:hover{border-color:var(--bl)}
+.tres{margin:0 0 12px;padding:12px 16px;border-radius:8px;background:var(--grS);border:1px solid var(--gr)}
+.tres b.big2{font-size:22px;display:block;margin-bottom:4px}
+.tstep{color:var(--tx2);font-size:13px;margin:0 0 8px}
+.lnk{display:flex;gap:12px;flex-wrap:wrap;margin:16px 0}
+.cheat h2{font-size:20px}
+@media print{.rq,.tbtns,.status{display:none}}

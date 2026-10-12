@@ -22,6 +22,25 @@
  var menu=document.getElementById('menu'),side=document.getElementById('side');
  if(menu)menu.addEventListener('click',function(){side.classList.toggle('open')});
  document.addEventListener('click',function(e){if(side&&side.classList.contains('open')&&!side.contains(e.target)&&e.target!==menu)side.classList.remove('open')});
+ // карты: ссылки в боковом меню всех страниц и кнопки на главной
+ var MAPS=[['🧭 Карта открытий','map.html'],['🏰 Карта Европы','europe.html'],['🌷 Нидерланды','netherlands.html'],['👑 Англия','england.html'],['⚜️ Франция','france.html'],['🕌 Азия и Африка','asia.html']];
+ if(side&&!side.querySelector('a[href$="map.html"]')){
+  var an=side.querySelector('a[href$="timeline.html"]'),ref=an?an.nextSibling:side.querySelector('.chh');
+  MAPS.forEach(function(m){var a=document.createElement('a');a.className='nl';a.href=BASE+m[1];a.textContent=m[0];side.insertBefore(a,ref)});
+ }
+ var qk=document.querySelector('.quick');
+ if(qk&&!qk.querySelector('a[href$="map.html"]')){
+  MAPS.forEach(function(m){var a=document.createElement('a');a.className='btn ghost';a.href=BASE+m[1];a.textContent=m[0];qk.appendChild(a)});
+ }
+ // раздел «Русский язык»
+ if(side&&!side.querySelector('a[href$="rus/index.html"]')){
+  var br=side.querySelector('.brand'),ra=document.createElement('a');ra.className='nl';ra.href=BASE+'rus/index.html';ra.textContent='📝 Русский язык, 7 класс';
+  side.insertBefore(ra,br?br.nextSibling:side.firstChild);
+ }
+ if(qk&&!qk.querySelector('a[href$="rus/index.html"]')){
+  var rb=document.createElement('a');rb.className='btn ghost';rb.href=BASE+'rus/index.html';rb.textContent='📝 Русский язык';
+  if(qk.firstChild)qk.firstChild.after(rb);else qk.appendChild(rb);
+ }
  // quiz
  var quiz=document.querySelector('.quiz');
  if(quiz){
