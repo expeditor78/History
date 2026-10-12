@@ -1,12 +1,12 @@
 {
-  "name": "История Нового времени, 7 класс",
-  "short_name": "История 7",
-  "description": "Шпаргалки, тесты и видеоразборы по истории Нового времени для 7 класса",
+  "name": "7 класс",
+  "short_name": "7 класс",
+  "description": "Русский язык и история Нового времени, 7 класс: правила, шпаргалки, тесты",
   "lang": "ru",
-  "start_url": "./index.html",
+  "start_url": "./start.html",
   "scope": "./",
   "display": "standalone",
-  "background_color": "#ffffff",
+  "background_color": "#191919",
   "theme_color": "#2783DE",
   "icons": [
     {"src": "icon.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any"},

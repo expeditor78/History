@@ -1,4 +1,5 @@
 (function(){
+ try{document.documentElement.setAttribute('data-theme',localStorage.getItem('theme')||'dark')}catch(e){}
  var BASE=document.currentScript?document.currentScript.src.replace(/app\.js.*$/,''):'';
  var NAMES=['Не начато','Читаем','Повторить','Усвоено'];
  var KEY='hist7.v1';
@@ -36,6 +37,7 @@
  if(side&&!side.querySelector('a[href$="rus/index.html"]')){
   var br=side.querySelector('.brand'),ra=document.createElement('a');ra.className='nl';ra.href=BASE+'rus/index.html';ra.textContent='📝 Русский язык, 7 класс';
   side.insertBefore(ra,br?br.nextSibling:side.firstChild);
+  [['⚙️ Настройки','settings.html'],['🏠 Выбор предмета','start.html']].forEach(function(m){var a=document.createElement('a');a.className='nl';a.href=BASE+m[1];a.textContent=m[0];side.insertBefore(a,br?br.nextSibling:side.firstChild)});
  }
  if(qk&&!qk.querySelector('a[href$="rus/index.html"]')){
   var rb=document.createElement('a');rb.className='btn ghost';rb.href=BASE+'rus/index.html';rb.textContent='📝 Русский язык';

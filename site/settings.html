@@ -1,0 +1,15 @@
+<!doctype html><html lang="ru" data-theme="dark"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Настройки — 7 класс</title><link rel="stylesheet" href="style.css"><script src="theme.js"></script><link rel="manifest" href="manifest.webmanifest"><meta name="theme-color" content="#191919"><link rel="icon" href="icon.svg" type="image/svg+xml">
+<style>.set{max-width:640px;margin:0 auto;padding:32px 20px 64px}.set h1{margin:12px 0 24px}.set h2{font-size:18px;margin:32px 0 12px}
+.seg{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}.seg button{font:inherit;cursor:pointer;min-height:48px;border:1px solid var(--bd);background:var(--sf);color:var(--tx);border-radius:10px}
+.seg button.on{background:var(--blS);border-color:var(--bl);color:var(--bl);font-weight:600}.row{display:flex;justify-content:space-between;border-top:1px solid var(--bd);padding:12px 0;color:var(--tx2)}.row b{color:var(--tx)}</style></head>
+<body><div class="set"><a href="start.html">← Выбор предмета</a><h1>⚙️ Настройки</h1>
+<h2>Тема оформления</h2>
+<div class="seg" id="seg"><button data-v="dark">🌙 Тёмная</button><button data-v="light">☀️ Светлая</button><button data-v="auto">📱 Как в системе</button></div>
+<h2>О приложении</h2>
+<div class="row"><span>Название</span><b>7 класс</b></div><div class="row"><span>Версия</span><b>1.21</b></div>
+<script>
+(function(){var seg=document.getElementById('seg');function cur(){var t='dark';try{t=localStorage.getItem('theme')||'dark'}catch(e){}return t}
+function mark(){var c=cur();seg.querySelectorAll('button').forEach(function(b){b.classList.toggle('on',b.dataset.v===c)})}
+seg.addEventListener('click',function(e){var b=e.target.closest('button');if(!b)return;try{localStorage.setItem('theme',b.dataset.v)}catch(x){}document.documentElement.setAttribute('data-theme',b.dataset.v);mark()});mark()})();
+</script></div></body></html>

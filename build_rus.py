@@ -19,7 +19,9 @@ def esc(t): return html.escape(t, quote=False)
 
 def nav(active):
     h = [f'<nav class="side" id="side" data-total="{len(TOPICS)}"><a class="brand" href="index.html">📝 Русский язык<small>7 класс</small></a>',
-         '<a class="nl" href="../index.html">← История Нового времени</a>',
+         '<a class="nl" href="../start.html">🏠 Выбор предмета</a>',
+         '<a class="nl" href="../index.html">🧭 История Нового времени</a>',
+         '<a class="nl" href="../settings.html">⚙️ Настройки</a>',
          f'<div class="prog"><div class="bar"><i id="gbar"></i></div><span id="gtxt">0 из {len(TOPICS)}</span></div>']
     for f, t in [('practice.html', '🧪 Практикум'), ('test.html', '✅ Итоговый тест'), ('cheat.html', '📋 Шпаргалка и термины')]:
         h.append(f'<a class="nl {"on" if active == f else ""}" href="{f}">{t}</a>')
@@ -32,7 +34,7 @@ def nav(active):
 
 def page(title, body, active):
     return f'''<!doctype html><html lang="ru"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>{esc(title)} — Русский язык, 7 класс</title><link rel="stylesheet" href="../style.css"><link rel="stylesheet" href="rus.css"><link rel="manifest" href="../manifest.webmanifest"><meta name="theme-color" content="#2783DE"><link rel="icon" href="../icon.svg" type="image/svg+xml"></head>
+<title>{esc(title)} — Русский язык, 7 класс</title><link rel="stylesheet" href="../style.css"><script src="../theme.js"></script><link rel="stylesheet" href="rus.css"><link rel="manifest" href="../manifest.webmanifest"><meta name="theme-color" content="#2783DE"><link rel="icon" href="../icon.svg" type="image/svg+xml"></head>
 <body><header class="top"><button id="menu" aria-label="Меню">☰</button><span>Русский язык · 7 класс</span></header>
 {nav(active)}<main>{body}{ABOUT}</main><script src="rus.js" defer></script></body></html>'''
 
@@ -115,7 +117,7 @@ def build():
 <p class="lead">Опорные конспекты по темам 7 класса: причастие, деепричастие, наречие, категория состояния, служебные части речи и междометие. В каждой теме — правило, примеры, типичные ошибки и тест.</p>
 <aside class="callout"><span class="ico">💡</span><div><p>Порядок работы: <b>прочитать правило → разобрать примеры → пройти тест темы → выполнить задания практикума</b>. Конспекты дополняют учебник, а не заменяют его.</p></div></aside>
 <div class="hero"><div><b id="hnum">0</b><span>тем усвоено из <span id="htot">{len(TOPICS)}</span></span></div><div class="bar big"><i id="hbar"></i></div></div>
-<div class="quick"><a class="btn" href="{TOPICS[0]["slug"]}.html">Начать →</a><a class="btn ghost" href="practice.html">Практикум</a><a class="btn ghost" href="test.html">Итоговый тест</a><a class="btn ghost" href="cheat.html">Шпаргалка</a><a class="btn ghost" href="../index.html">← История</a></div>
+<div class="quick"><a class="btn" href="{TOPICS[0]["slug"]}.html">Начать →</a><a class="btn ghost" href="practice.html">Практикум</a><a class="btn ghost" href="test.html">Итоговый тест</a><a class="btn ghost" href="cheat.html">Шпаргалка</a><a class="btn ghost" href="../start.html">🏠 Выбор предмета</a></div>
 <h2 class="chtitle" style="--c:#2783DE">Темы</h2><div class="grid">{cards}</div>'''
     open(f'{out}/index.html', 'w', encoding='utf-8').write(page('Оглавление', body, ''))
 

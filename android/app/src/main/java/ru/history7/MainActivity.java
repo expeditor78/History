@@ -20,7 +20,7 @@ import androidx.webkit.WebViewAssetLoader;
 /** Оболочка: показывает сайт из assets по https-адресу (нужно, чтобы работали встроенные ролики YouTube). */
 public class MainActivity extends Activity {
     private static final String HOST = "appassets.androidplatform.net";
-    private static final String HOME = "https://" + HOST + "/assets/index.html";
+    private static final String HOME = "https://" + HOST + "/assets/start.html";
 
     private FrameLayout root;
     private WebView web;
@@ -37,7 +37,7 @@ public class MainActivity extends Activity {
                 .build();
 
         root = new FrameLayout(this);
-        root.setBackgroundColor(Color.WHITE);
+        root.setBackgroundColor(Color.parseColor("#191919"));
         web = new WebView(this);
         root.addView(web, new FrameLayout.LayoutParams(
                 ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
