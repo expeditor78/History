@@ -18,7 +18,7 @@ ABOUT = ('<footer class="about">💡 Идея и составление: <b>Ал
 def esc(t): return html.escape(t, quote=False)
 
 def nav(active):
-    h = [f'<nav class="side" id="side" data-total="{len(TOPICS)}"><a class="brand" href="index.html">📝 Русский язык<small>7 класс</small></a>',
+    h = [f'<nav class="side" id="side" data-total="{len(TOPICS)}" aria-label="Меню русского языка"><button type="button" class="side-close" aria-label="Закрыть меню">✕ Закрыть меню</button><a class="brand" href="index.html">📝 Русский язык<small>7 класс</small></a>',
          '<a class="nl" href="../start.html">🏠 Выбор предмета</a>',
          '<a class="nl" href="../index.html">🧭 История Нового времени</a>',
          '<a class="nl" href="../settings.html">⚙️ Настройки</a>',
@@ -35,8 +35,8 @@ def nav(active):
 def page(title, body, active):
     return f'''<!doctype html><html lang="ru"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <title>{esc(title)} — Русский язык, 7 класс</title><link rel="stylesheet" href="../style.css"><script src="../theme.js"></script><link rel="stylesheet" href="rus.css"><link rel="manifest" href="../manifest.webmanifest"><meta name="theme-color" content="#2783DE"><link rel="icon" href="../icon.svg" type="image/svg+xml"></head>
-<body><header class="top"><button id="menu" aria-label="Меню">☰</button><span>Русский язык · 7 класс</span></header>
-{nav(active)}<main>{body}{ABOUT}</main><script src="rus.js" defer></script></body></html>'''
+<body><header class="top"><button id="menu" aria-label="Меню" aria-controls="side" aria-expanded="false">☰</button><span>Русский язык · 7 класс</span></header>
+{nav(active)}<main>{body}{ABOUT}</main><script src="rus.js" defer></script><script src="navigation.js" defer></script></body></html>'''
 
 def quiz(qid, items, tags=None):
     h = [f'<div class="rq" data-id="{qid}">']
@@ -53,7 +53,7 @@ def build():
     out = os.path.join(OUT, 'rus')
     shutil.rmtree(out, ignore_errors=True)
     os.makedirs(out)
-    for f in ('rus.css', 'rus.js'):
+    for f in ('rus.css', 'rus.js', 'navigation.js'):
         shutil.copy(os.path.join(SRC, f), os.path.join(out, f))
     order = [t['slug'] for t in TOPICS]
 

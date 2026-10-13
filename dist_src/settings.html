@@ -6,10 +6,18 @@
 <body><div class="set"><a href="start.html">← Выбор предмета</a><h1>⚙️ Настройки</h1>
 <h2>Тема оформления</h2>
 <div class="seg" id="seg"><button data-v="dark">🌙 Тёмная</button><button data-v="light">☀️ Светлая</button><button data-v="auto">📱 Как в системе</button></div>
+<h2>Обновления</h2>
+<p><a class="btn ghost" id="check-update" href="https://github.com/expeditor78/History/releases/latest">Проверить обновления</a></p>
+<p class="update-hint" style="color:var(--tx2);font-size:14px">На сайте кнопка открывает страницу последней версии APK.</p>
 <h2>О приложении</h2>
 <div class="row"><span>Название</span><b>7 класс</b></div><div class="row"><span>Версия</span><b>1.21</b></div>
 <script>
-(function(){var seg=document.getElementById('seg');function cur(){var t='dark';try{t=localStorage.getItem('theme')||'dark'}catch(e){}return t}
+(function(){
+if(location.protocol==='https:' && location.hostname==='appassets.androidplatform.net'){
+ document.getElementById('check-update').href='/assets/check-update';
+ document.querySelector('.update-hint').textContent='Проверяем при запуске, не чаще раза в день. Здесь можно проверить в любой момент. Скачивание и установка — только с твоего согласия.';
+}
+var seg=document.getElementById('seg');function cur(){var t='dark';try{t=localStorage.getItem('theme')||'dark'}catch(e){}return t}
 function mark(){var c=cur();seg.querySelectorAll('button').forEach(function(b){b.classList.toggle('on',b.dataset.v===c)})}
 seg.addEventListener('click',function(e){var b=e.target.closest('button');if(!b)return;try{localStorage.setItem('theme',b.dataset.v)}catch(x){}document.documentElement.setAttribute('data-theme',b.dataset.v);mark()});mark()})();
 </script></div></body></html>

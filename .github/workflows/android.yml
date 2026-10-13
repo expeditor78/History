@@ -62,7 +62,20 @@ jobs:
         run: |
           cp android/app/build/outputs/apk/release/app-release.apk History7.apk
           cp android/app/build/outputs/bundle/release/app-release.aab History7.aab
-          ls -l History7.apk History7.aab
+          AAPT=$(ls -d "$ANDROID_HOME"/build-tools/*/aapt | sort -V | tail -1)
+          "$AAPT" dump badging History7.apk > apk-badging.txt
+          python3 - <<'PY'
+          import json, os, re
+          from pathlib import Path
+          package = Path('apk-badging.txt').read_text().splitlines()[0]
+          code = int(re.search(r"versionCode='(\d+)'", package).group(1))
+          name = re.search(r"versionName='([^']+)'", package).group(1)
+          run = os.environ['GITHUB_RUN_NUMBER']
+          data = dict(versionCode=code, versionName=name,
+                      apkUrl=f'https://github.com/expeditor78/History/releases/download/apk-{run}/History7.apk')
+          Path('update.json').write_text(json.dumps(data, ensure_ascii=False), encoding='utf-8')
+          PY
+          ls -l History7.apk History7.aab update.json
 
       - name: Verify APK signature (apksigner)
         shell: bash
@@ -93,6 +106,7 @@ jobs:
           path: |
             History7.apk
             History7.aab
+            update.json
           if-no-files-found: error
 
       - name: Publish GitHub Release
@@ -103,4 +117,5 @@ jobs:
           files: |
             History7.apk
             History7.aab
+            update.json
           fail_on_unmatched_files: true

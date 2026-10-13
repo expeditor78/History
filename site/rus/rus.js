@@ -19,8 +19,12 @@
   if(stEl){var s=S.st[stEl.dataset.t]||0;stEl.dataset.s=s;stEl.querySelector('.st').textContent=NAMES[s]}
  }
  if(stEl)stEl.querySelector('.st').addEventListener('click',function(){var n=stEl.dataset.t;S.st[n]=((S.st[n]||0)+1)%4;save();paint()});
- if(menu&&side)menu.addEventListener('click',function(){side.classList.toggle('open')});
- document.addEventListener('click',function(e){if(side&&side.classList.contains('open')&&!side.contains(e.target)&&e.target!==menu)side.classList.remove('open')});
+ function setMenu(open){if(!side||!menu)return;side.classList.toggle('open',open);menu.setAttribute('aria-expanded',String(open))}
+ if(menu&&side)menu.addEventListener('click',function(){setMenu(!side.classList.contains('open'))});
+ var closeMenu=side&&side.querySelector('.side-close');
+ if(closeMenu)closeMenu.addEventListener('click',function(){setMenu(false);menu.focus()});
+ document.addEventListener('keydown',function(e){if(e.key==='Escape'&&side&&side.classList.contains('open')){setMenu(false);menu.focus()}});
+ document.addEventListener('click',function(e){if(side&&side.classList.contains('open')&&!side.contains(e.target)&&e.target!==menu)setMenu(false)});
  // тесты
  document.querySelectorAll('.rq').forEach(function(box){
   var id=box.dataset.id,qs=box.querySelectorAll('.q'),total=qs.length,right=0,answered=0;

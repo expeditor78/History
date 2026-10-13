@@ -26,10 +26,12 @@ public class MainActivity extends Activity {
     private WebView web;
     private View customView;
     private WebChromeClient.CustomViewCallback customCallback;
+    private UpdateChecker updates;
 
     @Override
     protected void onCreate(Bundle state) {
         super.onCreate(state);
+        updates = new UpdateChecker(this);
 
         final WebViewAssetLoader loader = new WebViewAssetLoader.Builder()
                 .setDomain(HOST)
@@ -60,6 +62,11 @@ public class MainActivity extends Activity {
             public boolean shouldOverrideUrlLoading(WebView v, WebResourceRequest r) {
                 if (!r.isForMainFrame()) return false;
                 Uri u = r.getUrl();
+                if ("https".equals(u.getScheme()) && HOST.equals(u.getHost())
+                        && "/assets/check-update".equals(u.getPath())) {
+                    updates.check(true);
+                    return true;
+                }
                 if (HOST.equals(u.getHost())) return false;
                 try {
                     startActivity(new Intent(Intent.ACTION_VIEW, u)); // внешние ссылки — в браузер / приложение YouTube
@@ -97,6 +104,7 @@ public class MainActivity extends Activity {
 
         if (state != null) web.restoreState(state);
         else web.loadUrl(HOME);
+        updates.check(false);
     }
 
     @Override
@@ -124,6 +132,7 @@ public class MainActivity extends Activity {
 
     @Override
     protected void onDestroy() {
+        updates.close();
         root.removeAllViews();
         web.destroy();
         super.onDestroy();
