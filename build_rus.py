@@ -8,7 +8,7 @@ HERE = os.path.dirname(os.path.abspath(__file__))
 SRC = os.path.join(HERE, 'rus_src')
 OUT = os.path.join(HERE, 'site')
 sys.path.insert(0, SRC)
-import les1, les2, les3, les4, content3, h
+import les1, les2, les3, les4, content3, h, textbook_rules
 
 TOPICS = les1.TOPICS + les2.TOPICS + les3.TOPICS + les4.TOPICS
 LET = 'АБВГД'
@@ -59,7 +59,10 @@ def build():
 
     # страницы тем
     for i, t in enumerate(TOPICS):
-        secs = ''.join(f'<h2>{esc(h)}</h2>{b}' for h, b in t['sections'])
+        secs = ''.join(
+            f'<h2>{esc(title)}</h2>{textbook_rules.render(t["slug"], j)}'
+            f'<div class="lesson-explanation">{text}</div>'
+            for j, (title, text) in enumerate(t['sections']))
         pv = TOPICS[i - 1] if i else None
         nx = TOPICS[i + 1] if i + 1 < len(TOPICS) else None
         pager = ('<div class="pager">' +
@@ -88,7 +91,7 @@ def build():
 <p class="lead">Задания на самопроверку: сначала выполните самостоятельно, затем сверьтесь с ответом.</p>
 <h2>Н или НН: алгоритм</h2>
 <p>Ответьте на вопросы по порядку — алгоритм подскажет, сколько букв Н писать в причастии или отглагольном прилагательном.</p>
-<div class="tree" id="tree"></div><script type="application/json" id="tree-data">{tree}</script>
+<p class="hint">Алгоритм — для полных причастий, полных отглагольных прилагательных и кратких причастий. Краткое прилагательное проверяй по полной форме и роду: <i>воспитан — воспитанна — воспитанны</i>.</p><div class="tree" id="tree"></div><script type="application/json" id="tree-data">{tree}</script>
 <h2>Расставьте знаки препинания</h2>
 <p>Спишите предложение и расставьте запятые, где они нужны. В некоторых предложениях запятые не нужны.</p>{punct}
 <h2>Найдите ошибки</h2>
@@ -114,7 +117,7 @@ def build():
     # главная раздела
     cards = ''.join(f'<a class="card" data-t="{t["slug"]}" href="{t["slug"]}.html"><span class="ci">{t["icon"]}</span><span class="ct">{esc(t["title"])}</span><span class="badge">Не начато</span></a>' for t in TOPICS)
     body = f'''<h1>Русский язык, 7 класс — понятно и с примерами</h1>
-<p class="lead">Причастие, деепричастие, наречие, категория состояния, предлоги, союзы, частицы и междометия. Всё объяснено простыми словами: что это такое, зачем нужно, как не запутаться, плюс примеры, лайфхаки и разбор «по шагам».</p>
+<p class="lead">Причастие, деепричастие, наречие, категория состояния, предлоги, союзы, частицы и междометия. Всё объяснено простыми словами: что это такое, зачем нужно, как не запутаться, плюс примеры, лайфхаки и разбор «по шагам». В каждом разделе есть отдельное правило для заучивания по учебнику и ссылка на оригинал.</p>
 <aside class="callout"><span class="ico">💡</span><div><p>Как заниматься: <b>читай тему по порядку → пробуй ответить сам на вопросы с «🤔» → разбери примеры → пройди тест темы → потренируйся в практикуме</b>. Если что-то непонятно, вернись на шаг назад: в каждой теме есть блок «Простыми словами».</p></div></aside>
 <div class="hero"><div><b id="hnum">0</b><span>тем усвоено из <span id="htot">{len(TOPICS)}</span></span></div><div class="bar big"><i id="hbar"></i></div></div>
 <div class="quick"><a class="btn" href="{TOPICS[0]["slug"]}.html">Начать →</a><a class="btn ghost" href="practice.html">Практикум</a><a class="btn ghost" href="test.html">Итоговый тест</a><a class="btn ghost" href="cheat.html">Шпаргалка</a><a class="btn ghost" href="../start.html">🏠 Выбор предмета</a></div>

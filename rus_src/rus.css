@@ -53,3 +53,14 @@ main h2{margin-top:40px}
 .side-close{display:none}
 @media(max-width:860px){.side-close{display:block;width:100%;min-height:44px;margin-bottom:8px;text-align:right;padding:8px 12px;border:1px solid var(--bd);border-radius:8px;background:var(--sf2);color:var(--tx);font:inherit;cursor:pointer}}
 @media print{.side-close{display:none!important}}
+
+/* Формальные правила: доступны офлайн; оригиналы открываются по ссылкам. */
+.textbook-rule{border:1px solid var(--bl);border-left:4px solid var(--bl);border-radius:12px;padding:18px;margin:16px 0 24px}
+.textbook-rule h3{margin:0 0 12px;font-size:19px;color:var(--bl)}
+.textbook-rule p{margin:10px 0}.textbook-rule p:last-child{margin-bottom:0}
+.textbook-rule .book-source{border-top:1px solid var(--bd);padding-top:12px;font-size:14px}
+.textbook-rule .book-note{font-size:13px;color:var(--tx2);line-height:1.45}
+.lesson-section.rule-only .lesson-explanation{display:none}
+.learn-mode{display:inline-flex;align-items:center;min-height:36px;padding:4px 10px;font:inherit;font-size:14px;border:1px solid var(--bl);border-radius:8px;color:var(--bl);background:var(--blS);cursor:pointer}
+.learn-mode[aria-pressed=true]{font-weight:600}.lesson-section,.lesson-section [id]{scroll-margin-top:270px}
+@media print{.lesson-section.rule-only .lesson-explanation{display:block}.textbook-rule{break-inside:avoid}.book-note{display:none}}
