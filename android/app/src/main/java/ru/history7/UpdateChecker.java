@@ -49,6 +49,9 @@ final class UpdateChecker {
             if (manual) toast("Проверка уже идёт…");
             return;
         }
+        // Ограничиваем именно попытки, в том числе при отсутствии интернета.
+        // Ручная кнопка не зависит от этого ограничения.
+        prefs.edit().putLong("checkedAt", System.currentTimeMillis()).apply();
         if (manual) toast("Проверяем обновления…");
         worker.execute(() -> {
             try {
@@ -69,7 +72,6 @@ final class UpdateChecker {
                         .getPackageInfo(activity.getPackageName(), 0);
                 long current = Build.VERSION.SDK_INT >= 28
                         ? installed.getLongVersionCode() : installed.versionCode;
-                prefs.edit().putLong("checkedAt", System.currentTimeMillis()).apply();
                 main.post(() -> {
                     if (!available()) return;
                     if (latestCode > current) {
