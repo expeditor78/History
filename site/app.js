@@ -16,7 +16,7 @@
   var hn=document.getElementById('hnum');if(hn)hn.textContent=done;
   document.querySelectorAll('.card[data-p]').forEach(function(c){var s=S.st[c.dataset.p]||0;c.dataset.s=s;c.querySelector('.badge').textContent=NAMES[s];});
   var st=document.getElementById('st');if(st){var n=cur(),s=S.st[n]||0;st.parentNode.dataset.s=s;st.textContent=NAMES[s];}
-  var c=document.getElementById('cont');if(c){for(var i=1;i<=21;i++){if((S.st[i]||0)!=3){c.href='p/'+(i<10?'0':'')+i+'.html';c.textContent=(S.st[i]?'Продолжить':'Начать')+' → § '+i;break}}}
+  var c=document.getElementById('cont');if(c){for(var i=1;i<=21;i++){if((S.st[i]||0)!=3){c.href='p/'+(i<10?'0':'')+i+'.html';var nums=['1','2','3','4','5','6','7','8','9','10','11','12','13','14—15','16—17','18','19','20','21','22','23'];c.textContent=(S.st[i]?'Продолжить':'Начать')+' → § '+nums[i-1];break}}}
  }
  var st=document.getElementById('st');
  if(st)st.addEventListener('click',function(){var n=cur();S.st[n]=((S.st[n]||0)+1)%4;save();paint();});
