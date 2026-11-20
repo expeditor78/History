@@ -13,7 +13,7 @@ android {
         // Каждая опубликованная сборка получает новый код, даже если versionName тот же.
         def runNumber = System.getenv('GITHUB_RUN_NUMBER')
         versionCode (runNumber ? 100 + runNumber.toInteger() : 6)
-        versionName '1.21'
+        versionName '1.22'
     }
 
     signingConfigs {
