@@ -21,4 +21,5 @@
  prev.addEventListener('click',function(){if(idx>0){idx--;paint(true)}});
  next.addEventListener('click',function(){if(idx<parts.length-1){idx++;paint(true)}});
  paint(false);
+ document.getElementById('history-nav').hidden=false;
 })();
